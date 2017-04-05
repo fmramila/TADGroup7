@@ -1,1 +1,3 @@
-/CCAmistadesLargas/target/
+target/
+test/
+.DS_Store
