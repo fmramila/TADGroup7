@@ -18,23 +18,21 @@ import org.vaadin.teemusa.sidemenu.SideMenu;
 @Theme("mytheme")
 public class IndexView extends SideMenu implements View{
 
-    private VerticalLayout mainLayout;
+    private VerticalLayout mainLayout = new EventosLayout();
     
-    public IndexView(){
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
         setMenuCaption("CCAmistadesLargas");
         addMenuItem("Eventos", () -> {
+            removeAllComponents();
             mainLayout = new EventosLayout();
             addComponent(mainLayout);
         });
         addMenuItem("Usuarios", () -> {
+            removeAllComponents();
             mainLayout = new UsuariosLayout();
             addComponent(mainLayout);
         });
-    }
-    
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        
     }
     
 }
