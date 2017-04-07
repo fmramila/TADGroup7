@@ -1,4 +1,4 @@
 target/
 test/
 .DS_Store
-nb_configuration.xml
+nb-configuration.xml
