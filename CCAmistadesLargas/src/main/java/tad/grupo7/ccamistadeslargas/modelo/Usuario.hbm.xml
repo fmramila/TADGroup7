@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 24-abr-2017 17:13:21 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="modelo.Usuario" table="Usuario" catalog="CC" optimistic-lock="version">
+        <id name="idUsuario" type="int">
+            <column name="idUsuario" />
+            <generator class="assigned" />
+        </id>
+        <property name="nombre" type="string">
+            <column name="nombre" length="30" />
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="20" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="30" />
+        </property>
+        <property name="icono" type="string">
+            <column name="icono" length="45" />
+        </property>
+        <set name="gastos" table="Gasto" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Usuario_idUsuario" not-null="true" />
+            </key>
+            <one-to-many class="modelo.Gasto" />
+        </set>
+        <set name="eventos" table="Usuario_has_Evento" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="Usuario_idUsuario" not-null="true" />
+            </key>
+            <many-to-many entity-name="modelo.Evento">
+                <column name="Evento_idEvento" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="gastos_1" table="Usuario_has_Gasto" inverse="false" lazy="true" fetch="select">
+            <key>
+                <column name="Usuario_idUsuario" not-null="true" />
+            </key>
+            <many-to-many entity-name="modelo.Gasto">
+                <column name="Gasto_idGasto" not-null="true" />
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>
