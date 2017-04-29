@@ -16,53 +16,23 @@ import javax.persistence.Table;
  */
 @Table
 @Entity
-public class Gasto {
+public class Usuario_has_Evento {
 
-    @Column
     @Id
-    private int idGasto;
     @Column
-    private String nombre;
-    @Column
-    private Integer precio;
+    private int Id_UsuarioEvento;
     @Column
     private int Usuario_idUsuario;
     @Column
     private int Evento_idEvento;
-    
-    public Gasto(){
-        
+
+    public Usuario_has_Evento() {
+
     }
 
-    public Gasto(String nombre, Integer precio, int Usuario_idUsuario, int Evento_idEvento) {
-        this.nombre = nombre;
-        this.precio = precio;
+    public Usuario_has_Evento(int Usuario_idUsuario, int Evento_idEvento) {
         this.Usuario_idUsuario = Usuario_idUsuario;
         this.Evento_idEvento = Evento_idEvento;
-    }
-
-    public int getIdGasto() {
-        return idGasto;
-    }
-
-    public void setIdGasto(int idGasto) {
-        this.idGasto = idGasto;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public Integer getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Integer precio) {
-        this.precio = precio;
     }
 
     public int getUsuario_idUsuario() {
@@ -80,6 +50,15 @@ public class Gasto {
     public void setEvento_idEvento(int Evento_idEvento) {
         this.Evento_idEvento = Evento_idEvento;
     }
+
+    public int getId_UsuarioEvento() {
+        return Id_UsuarioEvento;
+    }
+
+    public void setId_UsuarioEvento(int Id_UsuarioEvento) {
+        this.Id_UsuarioEvento = Id_UsuarioEvento;
+    }
     
     
+
 }

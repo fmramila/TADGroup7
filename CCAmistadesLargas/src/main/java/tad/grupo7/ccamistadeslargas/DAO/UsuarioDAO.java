@@ -8,53 +8,54 @@ package tad.grupo7.ccamistadeslargas.DAO;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.classic.Session;
-import tad.grupo7.ccamistadeslargas.modelo.Evento;
+import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
  *
  * @author cayetano
  */
-public class EventoDAO {
+public class UsuarioDAO {
+    static final AnnotationConfiguration configuration = new AnnotationConfiguration().addPackage("net.srirangan.packt.maven.TestHibernateApp.domain").addAnnotatedClass(Usuario.class);
+    static Session session = null;
     
-    static final AnnotationConfiguration configuration =  new AnnotationConfiguration().addPackage("net.srirangan.packt.maven.TestHibernateApp.domain").addAnnotatedClass(Evento.class);
-    static Session session;
-    
-    public static void create(Evento e){
+    public static void create(Usuario u){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(e);
+        session.save(u);
         tx.commit();
         session.close();
     }
     
-    public static void update(int id, String nombre, String divisa){
+    public static void update(int id, String nombre, String password, String email, String icono){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Evento WHERE idEvento = "+id);
-        Evento e = (Evento) q.uniqueResult();
-        e.setNombre(nombre);
-        e.setDivisa(divisa);
-        session.update(e);
+        Query q = session.createQuery("from Usuario WHERE idUsuario = "+id);
+        Usuario u = (Usuario) q.uniqueResult();
+        u.setNombre(nombre);
+        u.setPassword(password);
+        u.setEmail(email);
+        u.setIcono(icono);
+        session.update(u);
         tx.commit();
         session.close();
     }
     
-    public static Evento read(int id){
+    public static Usuario read(int id){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Evento WHERE idEvento = "+id);
-        Evento e = (Evento) q.uniqueResult();
+        Query q = session.createQuery("from Usuario WHERE idUsuario = "+id);
+        Usuario u = (Usuario) q.uniqueResult();
         tx.commit();
         session.close();
-        return e;
+        return u;
     }
     
     public static void delete(int id){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Evento WHERE idEvento = "+id);
-        Evento e = (Evento) q.uniqueResult();
-        session.delete(e);
+        Query q = session.createQuery("from Usuario WHERE idUsuario = "+id);
+        Usuario u = (Usuario) q.uniqueResult();
+        session.delete(u);
         tx.commit();
         session.close();
     }
