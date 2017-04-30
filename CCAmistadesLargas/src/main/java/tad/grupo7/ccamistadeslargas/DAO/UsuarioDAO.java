@@ -49,6 +49,15 @@ public class UsuarioDAO {
         session.close();
         return u;
     }
+    public static Usuario read(String email, String password){
+        session = configuration.buildSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from Usuario WHERE email = '"+email + "' AND password='"+password+"'");
+        Usuario u = (Usuario) q.uniqueResult();
+        tx.commit();
+        session.close();
+        return u;
+    }
     
     public static void delete(int id){
         session = configuration.buildSessionFactory().openSession();

@@ -6,6 +6,7 @@
 package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.Validator;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -16,16 +17,19 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
 
 @SuppressWarnings("serial")
 @Theme("mytheme")
-public class LoginView extends VerticalLayout implements View{
+public class LoginView extends VerticalLayout implements View {
 
     public LoginView() {
         setSizeFull();
@@ -52,11 +56,13 @@ public class LoginView extends VerticalLayout implements View{
         fields.setSpacing(true);
         fields.addStyleName("fields");
 
-        final TextField username = new TextField("Username");
-        username.setIcon(FontAwesome.USER);
-        username.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
+        final TextField email = new TextField("Email");
+        email.setRequired(true);
+        email.setIcon(FontAwesome.USER);
+        email.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
 
         final PasswordField password = new PasswordField("Password");
+        password.setRequired(true);
         password.setIcon(FontAwesome.LOCK);
         password.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
 
@@ -65,22 +71,49 @@ public class LoginView extends VerticalLayout implements View{
         signin.setClickShortcut(KeyCode.ENTER);
         signin.focus();
 
-        fields.addComponents(username, password, signin);
+        final Button registrar = new Button("Sign Up");
+        signin.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+        fields.addComponents(email, password, signin, registrar);
         fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
+        fields.setComponentAlignment(registrar, Alignment.BOTTOM_LEFT);
 
         signin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                UI.getCurrent().getNavigator().navigateTo("index");
+                try {
+                    email.validate();
+                    password.validate();
+                    if (UsuarioDAO.read(email.getValue(), password.getValue()) != null) {
+                        UI.getCurrent().getNavigator().navigateTo("index");
+                    } else {
+                        CssLayout labels = new CssLayout();
+                        labels.addStyleName("labels");
+                        Label l = new Label("Usuario incorrecto");
+                        l.setSizeUndefined();
+                        l.addStyleName(ValoTheme.LABEL_FAILURE);
+                        removeComponent(l);
+                        addComponent(l);
+                        setComponentAlignment(l, Alignment.TOP_CENTER);
+                    }
+                } catch (Validator.InvalidValueException ex) {
+
+                }
+            }
+        });
+        registrar.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(final ClickEvent event) {
+                UI.getCurrent().getNavigator().navigateTo("registrar");
             }
         });
         return fields;
     }
 
-
     @Override
+
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        
+
     }
 
 }
