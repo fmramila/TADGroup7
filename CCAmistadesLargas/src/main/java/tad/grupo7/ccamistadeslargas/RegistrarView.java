@@ -12,11 +12,11 @@ import com.vaadin.server.WrappedSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import sun.security.util.Password;
 import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
@@ -31,7 +31,7 @@ public class RegistrarView extends VerticalLayout implements View {
         setSpacing(true);
         TextField nombre = new TextField("Nombre");
         nombre.setRequired(true);
-        TextField password = new TextField("Contraseña");
+        PasswordField password = new PasswordField("Contraseña");
         password.setRequired(true);
         TextField email = new TextField("Email");
         email.setRequired(true);

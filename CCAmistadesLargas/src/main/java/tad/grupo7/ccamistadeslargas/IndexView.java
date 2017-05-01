@@ -20,8 +20,7 @@ public class IndexView extends SideMenu implements View{
 
     private VerticalLayout mainLayout = new EventosLayout();
     
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
+    public IndexView(){
         setMenuCaption("CCAmistadesLargas");
         addMenuItem("Eventos", () -> {
             removeAllComponents();
@@ -33,6 +32,11 @@ public class IndexView extends SideMenu implements View{
             mainLayout = new UsuariosLayout();
             addComponent(mainLayout);
         });
+    }
+    
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+        
     }
     
 }
