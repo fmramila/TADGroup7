@@ -24,6 +24,7 @@ class EventosLayout extends VerticalLayout {
     public EventosLayout() {
         setMargin(true);
         setSpacing(true);
+        
         Table table = new Table("");
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Divisa", String.class, null);
