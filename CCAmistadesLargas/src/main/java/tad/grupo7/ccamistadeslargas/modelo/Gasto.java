@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
 
 /**
  *
@@ -79,6 +80,11 @@ public class Gasto {
 
     public void setEvento_idEvento(int Evento_idEvento) {
         this.Evento_idEvento = Evento_idEvento;
+    }
+    
+    public Object[] getArray(){
+        Usuario u = UsuarioDAO.read(Usuario_idUsuario);
+        return new Object[]{getNombre(),getPrecio(),u.getNombre()};
     }
     
     

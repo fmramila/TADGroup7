@@ -54,6 +54,8 @@ public class Evento {
         this.divisa = divisa;
     }
     
-  
+    public String[] getArray(){
+        return new String[]{getNombre(),getDivisa()};
+    }
 
 }

@@ -11,15 +11,16 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -87,14 +88,9 @@ public class LoginView extends VerticalLayout implements View {
                     if (UsuarioDAO.read(email.getValue(), password.getValue()) != null) {
                         UI.getCurrent().getNavigator().navigateTo("index");
                     } else {
-                        CssLayout labels = new CssLayout();
-                        labels.addStyleName("labels");
-                        Label l = new Label("Usuario incorrecto");
-                        l.setSizeUndefined();
-                        l.addStyleName(ValoTheme.LABEL_FAILURE);
-                        removeComponent(l);
-                        addComponent(l);
-                        setComponentAlignment(l, Alignment.TOP_CENTER);
+                        Notification n = new Notification("Usuario incorrecto", Notification.Type.WARNING_MESSAGE);
+                        n.setPosition(Position.TOP_CENTER);
+                        n.show(Page.getCurrent());
                     }
                 } catch (Validator.InvalidValueException ex) {
 

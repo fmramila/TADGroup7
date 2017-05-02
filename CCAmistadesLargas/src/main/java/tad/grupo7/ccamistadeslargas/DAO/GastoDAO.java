@@ -5,9 +5,11 @@
  */
 package tad.grupo7.ccamistadeslargas.DAO;
 
+import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.classic.Session;
+import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 
 /**
@@ -48,6 +50,15 @@ public class GastoDAO {
         tx.commit();
         session.close();
         return g;
+    }
+    public static List<Gasto> readAll(int idEvento){
+        session = configuration.buildSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from Gasto WHERE Evento_idEvento = "+idEvento);
+        List<Gasto> gastos = (List<Gasto>) q.list();
+        tx.commit();
+        session.close();
+        return gastos;
     }
     
     public static void delete(int id){
