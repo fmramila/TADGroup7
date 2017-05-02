@@ -5,13 +5,14 @@
  */
 package tad.grupo7.ccamistadeslargas;
 
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
 
 /**
  *
  * @author cayetano
  */
-class UsuariosLayout extends VerticalLayout {
+class UsuariosLayout extends HorizontalSplitPanel {
 
     public UsuariosLayout() {
     }

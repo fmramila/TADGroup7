@@ -5,6 +5,8 @@
  */
 package tad.grupo7.ccamistadeslargas.DAO;
 
+import java.util.List;
+import static jdk.nashorn.internal.runtime.Debug.id;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.classic.Session;
@@ -47,6 +49,15 @@ public class EventoDAO {
         tx.commit();
         session.close();
         return e;
+    }
+    public static List<Evento> readAll(){
+        session = configuration.buildSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from Evento");
+        List<Evento> eventos = (List<Evento>) q.list();
+        tx.commit();
+        session.close();
+        return eventos;
     }
     
     public static void delete(int id){
