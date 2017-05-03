@@ -34,14 +34,14 @@ public class LoginView extends VerticalLayout implements View {
 
     public LoginView() {
         setSizeFull();
-
-        Component loginForm = buildLoginForm();
-        addComponent(loginForm);
-        setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
+        buildLoginForm();
 
     }
 
-    private Component buildLoginForm() {
+    /**
+     * Crea el formulario.
+     */
+    private void buildLoginForm() {
         final VerticalLayout loginPanel = new VerticalLayout();
         loginPanel.setSizeUndefined();
         loginPanel.setSpacing(true);
@@ -49,10 +49,16 @@ public class LoginView extends VerticalLayout implements View {
         loginPanel.addStyleName("login-panel");
 
         loginPanel.addComponent(buildFields());
-        return loginPanel;
+        addComponent(loginPanel);
+        setComponentAlignment(loginPanel, Alignment.MIDDLE_CENTER);
     }
 
+    /**
+     * Crea los campos del formulario.
+     * @return Component Devuelve el layout que contiene todos los campos del formulario.
+     */
     private Component buildFields() {
+        //LAYOUT CON LOS CAMPOS DEL FORMULARIO
         HorizontalLayout fields = new HorizontalLayout();
         fields.setSpacing(true);
         fields.addStyleName("fields");
@@ -79,6 +85,7 @@ public class LoginView extends VerticalLayout implements View {
         fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
         fields.setComponentAlignment(registrar, Alignment.BOTTOM_LEFT);
 
+        //LOGARSE
         signin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
@@ -93,10 +100,13 @@ public class LoginView extends VerticalLayout implements View {
                         n.show(Page.getCurrent());
                     }
                 } catch (Validator.InvalidValueException ex) {
-
+                    Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
                 }
             }
         });
+        //IR AL FORMULARIO DE REGISTRARSE
         registrar.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
