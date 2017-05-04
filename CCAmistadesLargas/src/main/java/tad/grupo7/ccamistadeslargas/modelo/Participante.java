@@ -16,10 +16,10 @@ import javax.persistence.Table;
  */
 @Table
 @Entity
-public class Amistades {
+public class Participante {
     @Column
     @Id
-    private int idAmistades;
+    private int idParticipante;
     @Column
     private String nombre;
     @Column
@@ -27,24 +27,24 @@ public class Amistades {
     @Column
     private int Usuario_idUsuario;
     
-    public Amistades(){
+    public Participante(){
         
     }
 
-    public Amistades(String nombre, String icono, int Usuario_idUsuario) {
+    public Participante(String nombre, String icono, int Usuario_idUsuario) {
         this.nombre = nombre;
         this.icono = icono;
         this.Usuario_idUsuario = Usuario_idUsuario;
     }
 
-    public int getIdAmistades() {
-        return idAmistades;
+    public int getIdParticipante() {
+        return idParticipante;
     }
 
-    public void setIdAmistades(int idAmistades) {
-        this.idAmistades = idAmistades;
+    public void setIdParticipante(int idParticipante) {
+        this.idParticipante = idParticipante;
     }
-
+   
     public String getNombre() {
         return nombre;
     }
@@ -69,5 +69,8 @@ public class Amistades {
         this.Usuario_idUsuario = Usuario_idUsuario;
     }
     
+    public String[] getArray(){
+        return new String[]{getNombre()};
+    }
     
 }

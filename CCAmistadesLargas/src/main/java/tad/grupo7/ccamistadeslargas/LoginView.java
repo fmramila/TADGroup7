@@ -27,6 +27,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
+import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 @SuppressWarnings("serial")
 @Theme("mytheme")
@@ -55,7 +56,9 @@ public class LoginView extends VerticalLayout implements View {
 
     /**
      * Crea los campos del formulario.
-     * @return Component Devuelve el layout que contiene todos los campos del formulario.
+     *
+     * @return Component Devuelve el layout que contiene todos los campos del
+     * formulario.
      */
     private Component buildFields() {
         //LAYOUT CON LOS CAMPOS DEL FORMULARIO
@@ -92,7 +95,9 @@ public class LoginView extends VerticalLayout implements View {
                 try {
                     email.validate();
                     password.validate();
-                    if (UsuarioDAO.read(email.getValue(), password.getValue()) != null) {
+                    Usuario u = UsuarioDAO.read(email.getValue(), password.getValue());
+                    if (u != null) {
+                        Session.setAttribute("usuario", u);
                         UI.getCurrent().getNavigator().navigateTo("index");
                     } else {
                         Notification n = new Notification("Usuario incorrecto", Notification.Type.WARNING_MESSAGE);

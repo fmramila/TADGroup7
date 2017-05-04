@@ -21,15 +21,18 @@ public class Evento {
     private String nombre;
     @Column
     private String divisa;
+    @Column
+    private int Usuario_idUsuario;
 
     public Evento() {
     }
 
-    public Evento(String nombre, String divisa) {
+    public Evento(String nombre, String divisa, int Usuario_idUsuario) {
         this.nombre = nombre;
         this.divisa = divisa;
+        this.Usuario_idUsuario = Usuario_idUsuario;
     }
-    
+
     public int getIdEvento() {
         return idEvento;
     }
@@ -53,9 +56,19 @@ public class Evento {
     public void setDivisa(String divisa) {
         this.divisa = divisa;
     }
-    
-    public String[] getArray(){
+
+    public int getUsuario_idUsuario() {
+        return Usuario_idUsuario;
+    }
+
+    public void setUsuario_idUsuario(int Usuario_idUsuario) {
+        this.Usuario_idUsuario = Usuario_idUsuario;
+    }
+
+    public String[] getArray() {
         return new String[]{getNombre(),getDivisa()};
     }
 
+    
+    
 }

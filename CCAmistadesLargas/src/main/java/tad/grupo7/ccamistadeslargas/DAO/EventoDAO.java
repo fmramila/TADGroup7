@@ -6,7 +6,6 @@
 package tad.grupo7.ccamistadeslargas.DAO;
 
 import java.util.List;
-import static jdk.nashorn.internal.runtime.Debug.id;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.classic.Session;
@@ -29,13 +28,14 @@ public class EventoDAO {
         session.close();
     }
     
-    public static void update(int id, String nombre, String divisa){
+    public static void update(int id, String nombre, String divisa, int Usuario_idUsuario){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
         Query q = session.createQuery("from Evento WHERE idEvento = "+id);
         Evento e = (Evento) q.uniqueResult();
         e.setNombre(nombre);
         e.setDivisa(divisa);
+        e.setUsuario_idUsuario(Usuario_idUsuario);
         session.update(e);
         tx.commit();
         session.close();
@@ -50,10 +50,10 @@ public class EventoDAO {
         session.close();
         return e;
     }
-    public static List<Evento> readAll(){
+    public static List<Evento> readAll(int idUsuario){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Evento");
+        Query q = session.createQuery("from Evento WHERE Usuario_idUsuario="+idUsuario);
         List<Evento> eventos = (List<Evento>) q.list();
         tx.commit();
         session.close();

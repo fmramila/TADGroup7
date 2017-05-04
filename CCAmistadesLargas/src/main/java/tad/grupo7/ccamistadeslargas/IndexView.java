@@ -9,7 +9,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.VerticalLayout;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
@@ -19,20 +18,15 @@ import org.vaadin.teemusa.sidemenu.SideMenu;
 @Theme("mytheme")
 public class IndexView extends SideMenu implements View{
 
-    private HorizontalSplitPanel mainLayout = new EventosLayout();
-    
     public IndexView(){
-        addComponent(mainLayout);
         setMenuCaption("CCAmistadesLargas");
         addMenuItem("Eventos", () -> {
             removeAllComponents();
-            mainLayout = new EventosLayout();
-            addComponent(mainLayout);
+            addComponent(new EventosLayout());
         });
         addMenuItem("Usuarios", () -> {
             removeAllComponents();
-            mainLayout = new UsuariosLayout();
-            addComponent(mainLayout);
+            addComponent(new UsuariosLayout());
         });
     }
     
