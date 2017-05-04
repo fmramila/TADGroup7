@@ -12,6 +12,7 @@ import com.vaadin.server.Page;
 import static com.vaadin.server.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
@@ -35,7 +36,7 @@ import tad.grupo7.ccamistadeslargas.modelo.Usuario;
  * @author cayetano
  */
 class EventosLayout extends HorizontalSplitPanel {
-    
+
     private final Usuario usuario;
 
     public EventosLayout() {
@@ -78,7 +79,7 @@ class EventosLayout extends HorizontalSplitPanel {
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
             EventoDAO.update(e.getIdEvento(), e.getNombre(), e.getDivisa(), usuario.getIdUsuario());
-            Notification n = new Notification("Evento actualizado "+usuario.getEmail(), Notification.Type.ASSISTIVE_NOTIFICATION);
+            Notification n = new Notification("Evento actualizado " + usuario.getEmail(), Notification.Type.ASSISTIVE_NOTIFICATION);
             n.setPosition(Position.TOP_CENTER);
             n.show(Page.getCurrent());
         });
@@ -97,8 +98,8 @@ class EventosLayout extends HorizontalSplitPanel {
         //TABLA CON TODOS LOS PARTICIPANTES DEL EVENTO
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, divisa, actualizar,eliminar, addPago);
-        VerticalLayout l = new VerticalLayout(form, tablaGastos,tablaParticipantes);
+        FormLayout form = new FormLayout(nombre, divisa, actualizar, eliminar, addPago);
+        VerticalLayout l = new VerticalLayout(form, tablaGastos, tablaParticipantes);
         l.setMargin(true);
         setSecondComponent(l);
     }
@@ -119,6 +120,13 @@ class EventosLayout extends HorizontalSplitPanel {
         titulo.setRequired(true);
         TextField precio = new TextField("Precio");
         precio.setRequired(true);
+
+        ComboBox select = new ComboBox();
+        List<Participante> participantes = ParticipanteDAO.readAll(idEvento);
+        for(Participante p : participantes){
+            select.addItem(p.getNombre());
+        }
+
         TextField usuario = new TextField("Usuario");
         usuario.setRequired(true);
         final Button add = new Button("Añadir Gasto");
@@ -131,7 +139,7 @@ class EventosLayout extends HorizontalSplitPanel {
                     titulo.validate();
                     precio.validate();
                     usuario.validate();
-                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()),idEvento, Integer.valueOf(usuario.getValue())));
+                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()), idEvento, Integer.valueOf(usuario.getValue())));
                     titulo.setValue("");
                     precio.setValue("");
                     usuario.setValue("");
@@ -158,7 +166,7 @@ class EventosLayout extends HorizontalSplitPanel {
         nombre.setRequired(true);
         TextField divisa = new TextField("Divisa");
         divisa.setRequired(true);
-        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres",1, 3, false));
+        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres", 1, 3, false));
         final Button add = new Button("Crear evento");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         FormLayout form = new FormLayout(nombre, divisa, add);
@@ -166,7 +174,7 @@ class EventosLayout extends HorizontalSplitPanel {
             try {
                 nombre.validate();
                 divisa.validate();
-                EventoDAO.create(new Evento(nombre.getValue(), divisa.getValue(),usuario.getIdUsuario()));
+                EventoDAO.create(new Evento(nombre.getValue(), divisa.getValue(), usuario.getIdUsuario()));
                 mostrarEventos();
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
@@ -177,8 +185,8 @@ class EventosLayout extends HorizontalSplitPanel {
         form.setMargin(true);
         setSecondComponent(form);
     }
-    
-    private Table getTablaEventos(){
+
+    private Table getTablaEventos() {
         List<Evento> eventos = EventoDAO.readAll(usuario.getIdUsuario());
         Table table = new Table("");
         table.addContainerProperty("Nombre", String.class, null);
