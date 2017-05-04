@@ -7,6 +7,7 @@ package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
+import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.Page;
 import static com.vaadin.server.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.shared.Position;
@@ -71,12 +72,13 @@ class EventosLayout extends HorizontalSplitPanel {
         nombre.setValue(e.getNombre());
         TextField divisa = new TextField("Divisa");
         divisa.setValue(e.getDivisa());
-        final Button actualizar = new Button("Actualizar");
+        final Button actualizar = new Button("Actualizar Evento");
+        final Button eliminar = new Button("Eliminar Evento");
         final Button addPago = new Button("Añadir Pago");
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
             EventoDAO.update(e.getIdEvento(), e.getNombre(), e.getDivisa(), usuario.getIdUsuario());
-            Notification n = new Notification("Evento actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
+            Notification n = new Notification("Evento actualizado "+usuario.getEmail(), Notification.Type.ASSISTIVE_NOTIFICATION);
             n.setPosition(Position.TOP_CENTER);
             n.show(Page.getCurrent());
         });
@@ -84,12 +86,18 @@ class EventosLayout extends HorizontalSplitPanel {
         addPago.addClickListener(clickEvent -> {
             mostrarFormularioAddGasto(e.getIdEvento());
         });
+        //BOTÓN PARA ELIMINAR EL EVENTO
+        eliminar.addClickListener(clickEvent -> {
+            EventoDAO.delete(e.getIdEvento());
+            removeAllComponents();
+            mostrarEventos();
+        });
         //TABLA CON TODOS LOS GASTOS DEL EVENTO
         Table tablaGastos = getTablaGastos(e);
         //TABLA CON TODOS LOS PARTICIPANTES DEL EVENTO
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, divisa, actualizar, addPago);
+        FormLayout form = new FormLayout(nombre, divisa, actualizar,eliminar, addPago);
         VerticalLayout l = new VerticalLayout(form, tablaGastos,tablaParticipantes);
         l.setMargin(true);
         setSecondComponent(l);
@@ -123,7 +131,7 @@ class EventosLayout extends HorizontalSplitPanel {
                     titulo.validate();
                     precio.validate();
                     usuario.validate();
-                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()), Integer.valueOf(usuario.getValue()), idEvento));
+                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()),idEvento, Integer.valueOf(usuario.getValue())));
                     titulo.setValue("");
                     precio.setValue("");
                     usuario.setValue("");
@@ -150,6 +158,7 @@ class EventosLayout extends HorizontalSplitPanel {
         nombre.setRequired(true);
         TextField divisa = new TextField("Divisa");
         divisa.setRequired(true);
+        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres",1, 3, false));
         final Button add = new Button("Crear evento");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         FormLayout form = new FormLayout(nombre, divisa, add);
@@ -160,7 +169,7 @@ class EventosLayout extends HorizontalSplitPanel {
                 EventoDAO.create(new Evento(nombre.getValue(), divisa.getValue(),usuario.getIdUsuario()));
                 mostrarEventos();
             } catch (Validator.InvalidValueException ex) {
-                Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
+                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
                 n.setPosition(Position.TOP_CENTER);
                 n.show(Page.getCurrent());
             }
