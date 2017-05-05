@@ -27,19 +27,19 @@ public class Gasto {
     @Column
     private Integer precio;
     @Column
-    private int Usuario_idUsuario;
-    @Column
     private int Evento_idEvento;
+    @Column
+    private int Participante_idParticipante;
     
     public Gasto(){
         
     }
 
-    public Gasto(String nombre, Integer precio, int Usuario_idUsuario, int Evento_idEvento) {
+    public Gasto(String nombre, Integer precio, int Evento_idEvento, int Participante_idParticipante) {
         this.nombre = nombre;
         this.precio = precio;
-        this.Usuario_idUsuario = Usuario_idUsuario;
         this.Evento_idEvento = Evento_idEvento;
+        this.Participante_idParticipante = Participante_idParticipante;
     }
 
     public int getIdGasto() {
@@ -66,14 +66,6 @@ public class Gasto {
         this.precio = precio;
     }
 
-    public int getUsuario_idUsuario() {
-        return Usuario_idUsuario;
-    }
-
-    public void setUsuario_idUsuario(int Usuario_idUsuario) {
-        this.Usuario_idUsuario = Usuario_idUsuario;
-    }
-
     public int getEvento_idEvento() {
         return Evento_idEvento;
     }
@@ -81,9 +73,18 @@ public class Gasto {
     public void setEvento_idEvento(int Evento_idEvento) {
         this.Evento_idEvento = Evento_idEvento;
     }
+
+    public int getParticipante_idParticipante() {
+        return Participante_idParticipante;
+    }
+
+    public void setParticipante_idParticipante(int Participante_idParticipante) {
+        this.Participante_idParticipante = Participante_idParticipante;
+    }
+
     
     public Object[] getArray(){
-        Usuario u = UsuarioDAO.read(Usuario_idUsuario);
+        Usuario u = UsuarioDAO.read(Participante_idParticipante);
         return new Object[]{getNombre(),getPrecio(),u.getNombre()};
     }
     

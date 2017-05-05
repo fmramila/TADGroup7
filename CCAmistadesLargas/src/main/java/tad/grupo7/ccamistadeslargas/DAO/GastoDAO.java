@@ -9,7 +9,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.classic.Session;
-import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 
 /**
@@ -28,15 +27,15 @@ public class GastoDAO {
         session.close();
     }
     
-    public static void update(int id, String nombre, Integer precio, int Usuario_idUsuario, int Evento_idEvento){
+    public static void update(int id, String nombre, Integer precio, int Evento_idEvento, int Participante_idParticipante){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
         Query q = session.createQuery("from Gasto WHERE idGasto = "+id);
         Gasto g = (Gasto) q.uniqueResult();
         g.setNombre(nombre);
         g.setPrecio(precio);
-        g.setUsuario_idUsuario(Usuario_idUsuario);
         g.setEvento_idEvento(Evento_idEvento);
+        g.setParticipante_idParticipante(Participante_idParticipante);
         session.update(g);
         tx.commit();
         session.close();

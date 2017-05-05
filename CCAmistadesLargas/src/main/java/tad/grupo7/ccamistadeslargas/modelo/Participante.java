@@ -10,37 +10,41 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ *
+ * @author cayetano
+ */
 @Table
 @Entity
-public class Evento {
-
+public class Participante {
     @Column
     @Id
-    private int idEvento;
+    private int idParticipante;
     @Column
     private String nombre;
     @Column
-    private String divisa;
+    private String icono;
     @Column
     private int Usuario_idUsuario;
-
-    public Evento() {
+    
+    public Participante(){
+        
     }
 
-    public Evento(String nombre, String divisa, int Usuario_idUsuario) {
+    public Participante(String nombre, String icono, int Usuario_idUsuario) {
         this.nombre = nombre;
-        this.divisa = divisa;
+        this.icono = icono;
         this.Usuario_idUsuario = Usuario_idUsuario;
     }
 
-    public int getIdEvento() {
-        return idEvento;
+    public int getIdParticipante() {
+        return idParticipante;
     }
 
-    public void setIdEvento(int idEvento) {
-        this.idEvento = idEvento;
+    public void setIdParticipante(int idParticipante) {
+        this.idParticipante = idParticipante;
     }
-
+   
     public String getNombre() {
         return nombre;
     }
@@ -49,12 +53,12 @@ public class Evento {
         this.nombre = nombre;
     }
 
-    public String getDivisa() {
-        return divisa;
+    public String getIcono() {
+        return icono;
     }
 
-    public void setDivisa(String divisa) {
-        this.divisa = divisa;
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
 
     public int getUsuario_idUsuario() {
@@ -64,11 +68,9 @@ public class Evento {
     public void setUsuario_idUsuario(int Usuario_idUsuario) {
         this.Usuario_idUsuario = Usuario_idUsuario;
     }
-
-    public String[] getArray() {
-        return new String[]{getNombre(),getDivisa()};
-    }
-
     
+    public String[] getArray(){
+        return new String[]{getNombre()};
+    }
     
 }

@@ -49,8 +49,7 @@ public class RegistrarView extends VerticalLayout implements View {
                     email.validate();
                     Usuario u = new Usuario(nombre.getValue(), password.getValue(), email.getValue(), "default.png");
                     UsuarioDAO.create(u);
-                    WrappedSession session = getSession().getSession();
-                    session.setAttribute("usuario", u);
+                    Session.setAttribute("usuario", u);
                     UI.getCurrent().getNavigator().navigateTo("index");
                 } catch (Validator.InvalidValueException ex) {
 
