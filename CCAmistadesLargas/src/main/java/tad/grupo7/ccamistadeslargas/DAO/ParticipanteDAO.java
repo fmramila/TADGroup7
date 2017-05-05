@@ -53,9 +53,18 @@ public class ParticipanteDAO {
         session.close();
         return p;
     }
+    public static int read(String nombre) {
+        session = configuration.buildSessionFactory().openSession();
+        org.hibernate.Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from Participante WHERE nombre = " + nombre);
+        Participante p = (Participante) q.uniqueResult();
+        tx.commit();
+        session.close();
+        return p.getIdParticipante();
+    }
 
     public static List<Participante> readAll(int idEvento) {
-        List<Integer> participantesID = Participante_has_EventoDAO.readAll(idEvento);
+        List<Integer> participantesID = Participante_has_EventoDAO.readAllParticipantesID(idEvento);
         List<Participante> participantes = new ArrayList<>();
         session = configuration.buildSessionFactory().openSession();
         for (Integer id : participantesID) {

@@ -17,6 +17,7 @@ import org.vaadin.teemusa.sidemenu.SideMenu;
  */
 @Theme("mytheme")
 public class IndexView extends SideMenu implements View{
+    
 
     public IndexView(){
         setMenuCaption("CCAmistadesLargas");
@@ -32,7 +33,6 @@ public class IndexView extends SideMenu implements View{
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        
     }
     
 }

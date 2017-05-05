@@ -120,15 +120,11 @@ class EventosLayout extends HorizontalSplitPanel {
         titulo.setRequired(true);
         TextField precio = new TextField("Precio");
         precio.setRequired(true);
-
-        ComboBox select = new ComboBox();
         List<Participante> participantes = ParticipanteDAO.readAll(idEvento);
-        for(Participante p : participantes){
-            select.addItem(p.getNombre());
+        ComboBox pagador = new ComboBox("Pagador");
+        for (Participante p : participantes) {
+            pagador.addItem(p.getNombre());
         }
-
-        TextField usuario = new TextField("Usuario");
-        usuario.setRequired(true);
         final Button add = new Button("Añadir Gasto");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         //SI SE CLICA EN AÑADIR PAGO SE CREA EL PAGO A LA VEZ QUE SE CIERRA LA VENTANA
@@ -138,11 +134,11 @@ class EventosLayout extends HorizontalSplitPanel {
                 try {
                     titulo.validate();
                     precio.validate();
-                    usuario.validate();
-                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()), idEvento, Integer.valueOf(usuario.getValue())));
+                    pagador.validate();
+                    GastoDAO.create(new Gasto(titulo.getValue(), Integer.valueOf(precio.getValue()), idEvento, ParticipanteDAO.read(pagador.getValue().toString())));
                     titulo.setValue("");
                     precio.setValue("");
-                    usuario.setValue("");
+                    pagador.setValue("");
                     subWindow.close(); // Close the sub-window
                 } catch (Validator.InvalidValueException ex) {
                     Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
@@ -152,7 +148,7 @@ class EventosLayout extends HorizontalSplitPanel {
             }
         });
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(titulo, precio, usuario, add);
+        FormLayout form = new FormLayout(titulo, precio, pagador, add);
         subContent.addComponent(form);
         subWindow.center();
         UI.getCurrent().addWindow(subWindow);

@@ -19,15 +19,15 @@ public class Participante_has_EventoDAO {
     static final AnnotationConfiguration configuration = new AnnotationConfiguration().addPackage("net.srirangan.packt.maven.TestHibernateApp.domain").addAnnotatedClass(Participante_has_Evento.class);
     static Session session = null;
     
-    public static void create(Participante_has_Evento u){
+    public static void create(Participante_has_Evento p){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(u);
+        session.save(p);
         tx.commit();
         session.close();
     }
     
-    public static List<Integer> readAll(int idEvento){
+    public static List<Integer> readAllParticipantesID(int idEvento){
         session = configuration.buildSessionFactory().openSession();
         org.hibernate.Transaction tx = session.beginTransaction();
         Query q = session.createQuery("from Participante_has_Evento WHERE Evento_idEvento="+idEvento);
