@@ -2,49 +2,34 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
+nombre
+amigoDe:usuario
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
  *
- * @author cayetano
+ * @author naiara
  */
-@Table
-@Entity
 public class Participante {
-    @Column
-    @Id
-    private int idParticipante;
-    @Column
+    private String id;
     private String nombre;
-    @Column
-    private String icono;
-    @Column
-    private int Usuario_idUsuario;
-    
-    public Participante(){
-        
-    }
+    private String idAmigoDe;
 
-    public Participante(String nombre, String icono, int Usuario_idUsuario) {
+    public Participante(String id, String nombre, String idAmigoDe) {
+        this.id = id;
         this.nombre = nombre;
-        this.icono = icono;
-        this.Usuario_idUsuario = Usuario_idUsuario;
+        this.idAmigoDe = idAmigoDe;
     }
 
-    public int getIdParticipante() {
-        return idParticipante;
+    public String getId() {
+        return id;
     }
 
-    public void setIdParticipante(int idParticipante) {
-        this.idParticipante = idParticipante;
+    public void setId(String id) {
+        this.id = id;
     }
-   
+
     public String getNombre() {
         return nombre;
     }
@@ -53,24 +38,17 @@ public class Participante {
         this.nombre = nombre;
     }
 
-    public String getIcono() {
-        return icono;
+    public String getIdAmigoDe() {
+        return idAmigoDe;
     }
 
-    public void setIcono(String icono) {
-        this.icono = icono;
-    }
-
-    public int getUsuario_idUsuario() {
-        return Usuario_idUsuario;
-    }
-
-    public void setUsuario_idUsuario(int Usuario_idUsuario) {
-        this.Usuario_idUsuario = Usuario_idUsuario;
+    public void setIdAmigoDe(String idAmigoDe) {
+        this.idAmigoDe = idAmigoDe;
     }
     
-    public String[] getArray(){
-        return new String[]{getNombre()};
-    }
+    
+
+    
+
     
 }

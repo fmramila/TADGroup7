@@ -26,9 +26,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import tad.grupo7.ccamistadeslargas.DAO.Participante_has_EventoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
-import tad.grupo7.ccamistadeslargas.modelo.Participante_has_Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 @SuppressWarnings("serial")
@@ -38,24 +36,6 @@ public class LoginView extends VerticalLayout implements View {
     public LoginView() {
         setSizeFull();
         buildLoginForm();
-        
-        /*
-        ParticipanteDAO.create(new Participante("nai", "nai", 1));
-        ParticipanteDAO.create(new Participante("fer", "fer", 1));
-
-
-
-        Participante_has_EventoDAO.create(new Participante_has_Evento(4,2)); //idPart, idEven
-        
-        
-        List<Integer> lista = Participante_has_EventoDAO.readAllParticipantesID(1);
-        for (int i : lista) {
-            System.out.println("HOLA: " + i);
-        }
-        if (lista.size() == 0) {
-            System.out.println("\n\nPATATA\n\n");
-        }
-        */
     }
 
     /**

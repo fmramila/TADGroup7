@@ -5,40 +5,31 @@
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
 
-@Table
-@Entity
+
 public class Evento {
 
-    @Column
-    @Id
-    private int idEvento;
-    @Column
+    private String id;
     private String nombre;
-    @Column
     private String divisa;
-    @Column
-    private int Usuario_idUsuario;
+    private String idCreador;
+    private List<Participante> participantes;
 
-    public Evento() {
-    }
-
-    public Evento(String nombre, String divisa, int Usuario_idUsuario) {
+    public Evento(String id, String nombre, String divisa, String idCreador, List<Participante> participantes) {
+        this.id = id;
         this.nombre = nombre;
         this.divisa = divisa;
-        this.Usuario_idUsuario = Usuario_idUsuario;
+        this.idCreador = idCreador;
+        this.participantes = participantes;
     }
 
-    public int getIdEvento() {
-        return idEvento;
+    public String getId() {
+        return id;
     }
 
-    public void setIdEvento(int idEvento) {
-        this.idEvento = idEvento;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -57,17 +48,25 @@ public class Evento {
         this.divisa = divisa;
     }
 
-    public int getUsuario_idUsuario() {
-        return Usuario_idUsuario;
+    public String getIdCreador() {
+        return idCreador;
     }
 
-    public void setUsuario_idUsuario(int Usuario_idUsuario) {
-        this.Usuario_idUsuario = Usuario_idUsuario;
+    public void setIdCreador(String idCreador) {
+        this.idCreador = idCreador;
     }
 
-    public String[] getArray() {
-        return new String[]{getNombre(),getDivisa()};
+    public List<Participante> getParticipantes() {
+        return participantes;
     }
+
+    public void setParticipantes(List<Participante> participantes) {
+        this.participantes = participantes;
+    }
+
+    
+
+   
 
     
     

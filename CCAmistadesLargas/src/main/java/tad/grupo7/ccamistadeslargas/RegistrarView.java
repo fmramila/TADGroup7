@@ -47,7 +47,7 @@ public class RegistrarView extends VerticalLayout implements View {
                     nombre.validate();
                     password.validate();
                     email.validate();
-                    Usuario u = new Usuario(nombre.getValue(), password.getValue(), email.getValue(), "default.png");
+                    Usuario u = new Usuario(nombre.getValue(), password.getValue(), email.getValue());
                     UsuarioDAO.create(u);
                     Session.setAttribute("usuario", u);
                     UI.getCurrent().getNavigator().navigateTo("index");

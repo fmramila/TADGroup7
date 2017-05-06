@@ -1,51 +1,44 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+nombre
+password
+email
+amigos:{participante1, particpante2,...}
+*/
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
+
 
 /**
  *
  * @author cayetano
  */
-@Table
-@Entity
 public class Usuario {
 
-    @Column
-    @Id
-    private int idUsuario;
-    @Column
+    private String id;
     private String nombre;
-    @Column
     private String password;
-    @Column
     private String email;
-    @Column
-    private String icono;
-    
-    public Usuario() {
-    }
+    private List<Participante> amigos;
 
-    public Usuario(String nombre, String password, String email, String icono) {
+    public Usuario(String id, String nombre, String password, String email, List<Participante> amigos) {
+        this.id = id;
         this.nombre = nombre;
         this.password = password;
         this.email = email;
-        this.icono = icono;
+        this.amigos = amigos;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getId() {
+        return id;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -72,13 +65,15 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getIcono() {
-        return icono;
+    public List<Participante> getAmigos() {
+        return amigos;
     }
 
-    public void setIcono(String icono) {
-        this.icono = icono;
+    public void setAmigos(List<Participante> amigos) {
+        this.amigos = amigos;
     }
+
     
+
     
 }

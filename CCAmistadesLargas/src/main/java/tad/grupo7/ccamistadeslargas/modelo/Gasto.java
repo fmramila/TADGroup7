@@ -5,49 +5,37 @@
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
+import java.util.List;
+
 
 /**
  *
  * @author cayetano
  */
-@Table
-@Entity
 public class Gasto {
 
-    @Column
-    @Id
-    private int idGasto;
-    @Column
+    private String id;
     private String nombre;
-    @Column
-    private Integer precio;
-    @Column
-    private int Evento_idEvento;
-    @Column
-    private int Participante_idParticipante;
-    
-    public Gasto(){
-        
-    }
+    private Double precio;
+    private String idEvento;
+    private String idPagador;
+    private List<Participante> deudores;
 
-    public Gasto(String nombre, Integer precio, int Evento_idEvento, int Participante_idParticipante) {
+    public Gasto(String id, String nombre, Double precio, String idEvento, String idPagador, List<Participante> deudores) {
+        this.id = id;
         this.nombre = nombre;
         this.precio = precio;
-        this.Evento_idEvento = Evento_idEvento;
-        this.Participante_idParticipante = Participante_idParticipante;
+        this.idEvento = idEvento;
+        this.idPagador = idPagador;
+        this.deudores = deudores;
     }
 
-    public int getIdGasto() {
-        return idGasto;
+    public String getId() {
+        return id;
     }
 
-    public void setIdGasto(int idGasto) {
-        this.idGasto = idGasto;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -58,35 +46,43 @@ public class Gasto {
         this.nombre = nombre;
     }
 
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
-    public int getEvento_idEvento() {
-        return Evento_idEvento;
+    public String getIdEvento() {
+        return idEvento;
     }
 
-    public void setEvento_idEvento(int Evento_idEvento) {
-        this.Evento_idEvento = Evento_idEvento;
+    public void setIdEvento(String idEvento) {
+        this.idEvento = idEvento;
     }
 
-    public int getParticipante_idParticipante() {
-        return Participante_idParticipante;
+    public String getIdPagador() {
+        return idPagador;
     }
 
-    public void setParticipante_idParticipante(int Participante_idParticipante) {
-        this.Participante_idParticipante = Participante_idParticipante;
+    public void setIdPagador(String idPagador) {
+        this.idPagador = idPagador;
+    }
+
+    public List<Participante> getDeudores() {
+        return deudores;
+    }
+
+    public void setDeudores(List<Participante> deudores) {
+        this.deudores = deudores;
     }
 
     
-    public Object[] getArray(){
-        Usuario u = UsuarioDAO.read(Participante_idParticipante);
-        return new Object[]{getNombre(),getPrecio(),u.getNombre()};
-    }
+
+    
+    
+
     
     
 }

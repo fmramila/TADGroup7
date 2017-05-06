@@ -5,86 +5,95 @@
  */
 package tad.grupo7.ccamistadeslargas.DAO;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.classic.Session;
-import static tad.grupo7.ccamistadeslargas.DAO.EventoDAO.session;
-import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
 
 /**
  *
- * @author cayetano
+ * @author Naiara
  */
 public class ParticipanteDAO {
 
-    static final AnnotationConfiguration configuration = new AnnotationConfiguration().addPackage("net.srirangan.packt.maven.TestHibernateApp.domain").addAnnotatedClass(Participante.class);
-    static Session session = null;
+    private static DB dataBase = null;
+    private static DBCollection participantes = dataBase.getCollection("Participante");
 
-    public static void create(Participante p) {
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(p);
-        tx.commit();
-        session.close();
+    public ParticipanteDAO() throws UnknownHostException {
+        dataBase = new MongoClient("localhost", 27017).getDB("CC");
     }
 
-    public static void update(int id, String nombre, String icono, int Usuario_idUsuario) {
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Participante WHERE idParticipante = " + id);
-        Participante p = (Participante) q.uniqueResult();
-        p.setNombre(nombre);
-        p.setIcono(icono);
-        p.setUsuario_idUsuario(Usuario_idUsuario);
-        session.update(p);
-        tx.commit();
-        session.close();
+    public static void create(String nombre, String idAmigoDe) {
+        BasicDBObject document = new BasicDBObject();
+        document.append("nombre", nombre);
+        document.append("idAmigoDe", idAmigoDe);
+        participantes.insert(document);
     }
 
-    public static Participante read(int id) {
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Participante WHERE idParticipante = " + id);
-        Participante p = (Participante) q.uniqueResult();
-        tx.commit();
-        session.close();
-        return p;
-    }
-    public static int read(String nombre) {
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Participante WHERE nombre = " + nombre);
-        Participante p = (Participante) q.uniqueResult();
-        tx.commit();
-        session.close();
-        return p.getIdParticipante();
+    public static void update(String id, String nombre) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
+        document.append("$set", new BasicDBObject().append("nombre", nombre));
     }
 
-    public static List<Participante> readAll(int idEvento) {
-        List<Integer> participantesID = Participante_has_EventoDAO.readAllParticipantesID(idEvento);
+    public static void delete(String id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
+        participantes.remove(document);
+    }
+
+    public static Participante read(String id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
+        String nombre = document.getString("nombre");
+        String idAmigoDe = document.getString("idAmigoDe");
+        return new Participante(id, nombre, idAmigoDe);
+    }
+    
+    public static List<Participante> readAllFromEvento(String idEvento) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", idEvento);
+        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Evento").findOne(whereQuery);
+        BasicDBList participantesDB = (BasicDBList)document.get("participantes");
+        Iterator it = participantesDB.iterator();
         List<Participante> participantes = new ArrayList<>();
-        session = configuration.buildSessionFactory().openSession();
-        for (Integer id : participantesID) {
-            org.hibernate.Transaction tx = session.beginTransaction();
-            Query q = session.createQuery("from Participante WHERE idParticipante = " + id);
-            Participante p = (Participante) q.uniqueResult();
-            participantes.add(p);
-            tx.commit();
+        while(it.hasNext()){
+            BasicDBObject p = (BasicDBObject) it.next();
+            participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
         }
-        session.close();
         return participantes;
     }
-
-    public static void delete(int id) {
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Participante WHERE idParticipante = " + id);
-        Participante p = (Participante) q.uniqueResult();
-        session.delete(p);
-        tx.commit();
-        session.close();
+    
+    public static List<Participante> readAllFromUsuario(String idUsuario) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", idUsuario);
+        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Usuario").findOne(whereQuery);
+        BasicDBList participantesDB = (BasicDBList)document.get("amigos");
+        Iterator it = participantesDB.iterator();
+        List<Participante> participantes = new ArrayList<>();
+        while(it.hasNext()){
+            BasicDBObject p = (BasicDBObject) it.next();
+            participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+        }
+        return participantes;
     }
+    
+    
+//    public static BasicDBObject readDBObject(String id) {
+//        BasicDBObject whereQuery = new BasicDBObject();
+//       whereQuery.put("_id", id);
+//        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
+//        return document;
+//    }
+
+
 }
