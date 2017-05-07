@@ -24,8 +24,6 @@ public class UsuarioDAO {
     private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
     private static DBCollection usuarios = dataBase.getCollection("Usuario");
 
-    ;
-
     public static void create(String nombre, String password, String email) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
@@ -90,8 +88,12 @@ public class UsuarioDAO {
         obj.add(new BasicDBObject("password", password));
         andQuery.put("$and", obj);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(andQuery);
-        String email = document.getString("email");
-        return new Usuario(document.getString("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getString("_id")));
+        Usuario u = null;
+        if (document != null) {
+            String email = document.getString("email");
+            u = new Usuario(document.getString("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getString("_id")));
+        }
+        return u;
     }
 
     public static BasicDBObject readDBObject(String id) {

@@ -56,15 +56,19 @@ public class ParticipanteDAO {
     }
 
     public static List<Participante> readAllFromEvento(String idEvento) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", idEvento);
-        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Evento").findOne(whereQuery);
-        BasicDBList participantesDB = (BasicDBList) document.get("participantes");
-        Iterator it = participantesDB.iterator();
         List<Participante> participantes = new ArrayList<>();
-        while (it.hasNext()) {
-            BasicDBObject p = (BasicDBObject) it.next();
-            participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+        try {
+            BasicDBObject whereQuery = new BasicDBObject();
+            whereQuery.put("_id", idEvento);
+            BasicDBObject document = (BasicDBObject) dataBase.getCollection("Evento").findOne(whereQuery);
+            BasicDBList participantesDB = (BasicDBList) document.get("participantes");
+            Iterator it = participantesDB.iterator();
+
+            while (it.hasNext()) {
+                BasicDBObject p = (BasicDBObject) it.next();
+                participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+            }
+        } catch (NullPointerException ex) {
         }
         return participantes;
     }
@@ -82,7 +86,8 @@ public class ParticipanteDAO {
                 BasicDBObject p = (BasicDBObject) it.next();
                 participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
             }
-        }catch(NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
 
         return participantes;
     }

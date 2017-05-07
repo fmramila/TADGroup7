@@ -79,7 +79,7 @@ class EventosLayout extends HorizontalSplitPanel {
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
             EventoDAO.update(e.getId(),nombre.getValue(),divisa.getValue());
-            Notification n = new Notification("Evento actualizado " + usuario.getEmail(), Notification.Type.ASSISTIVE_NOTIFICATION);
+            Notification n = new Notification("Evento actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
             n.setPosition(Position.TOP_CENTER);
             n.show(Page.getCurrent());
         });

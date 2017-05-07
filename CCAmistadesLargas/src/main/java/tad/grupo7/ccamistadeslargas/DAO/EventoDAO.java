@@ -54,7 +54,7 @@ public class EventoDAO {
     
     public static List<Evento> readAll(String idUsuario){
         BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("creador", idUsuario);
+        whereQuery.put("idCreador", idUsuario);
         DBCursor cursor = eventos.find(whereQuery);
         List<Evento> eventos = new ArrayList<>();
         while(cursor.hasNext()){
