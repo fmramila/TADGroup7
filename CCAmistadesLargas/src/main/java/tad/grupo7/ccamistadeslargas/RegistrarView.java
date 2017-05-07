@@ -8,7 +8,6 @@ package tad.grupo7.ccamistadeslargas;
 import com.vaadin.data.Validator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.WrappedSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
@@ -47,8 +46,8 @@ public class RegistrarView extends VerticalLayout implements View {
                     nombre.validate();
                     password.validate();
                     email.validate();
-                    Usuario u = new Usuario(nombre.getValue(), password.getValue(), email.getValue());
-                    UsuarioDAO.create(u);
+                    UsuarioDAO.create(nombre.getValue(),password.getValue(),email.getValue());
+                    Usuario u = UsuarioDAO.read(nombre.getValue(), password.getValue());
                     Session.setAttribute("usuario", u);
                     UI.getCurrent().getNavigator().navigateTo("index");
                 } catch (Validator.InvalidValueException ex) {

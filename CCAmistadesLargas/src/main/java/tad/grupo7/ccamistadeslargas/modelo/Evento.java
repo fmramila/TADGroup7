@@ -64,6 +64,11 @@ public class Evento {
         this.participantes = participantes;
     }
 
+    public String[] getArray() {
+        return new String[]{getNombre(),getDivisa()};
+    }
+    
+    
     
 
    

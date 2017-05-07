@@ -120,7 +120,7 @@ class EventosLayout extends HorizontalSplitPanel {
         titulo.setRequired(true);
         TextField precio = new TextField("Precio");
         precio.setRequired(true);
-        List<Participante> participantes = ParticipanteDAO.readAll(idEvento);
+        List<Participante> participantes = ParticipanteDAO.readAllFromEvento(idEvento);
         ComboBox pagador = new ComboBox("Pagador");
         for (Participante p : participantes) {
             pagador.addItem(p.getNombre());
@@ -135,7 +135,7 @@ class EventosLayout extends HorizontalSplitPanel {
                     titulo.validate();
                     precio.validate();
                     pagador.validate();
-                    GastoDAO.create(new Gasto(titulo.getValue(), Double.valueOf(precio.getValue()), null, null, null));
+                    GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), idEvento, pagador.getValue().toString(), null);
                     titulo.setValue("");
                     precio.setValue("");
                     pagador.setValue("");
@@ -170,7 +170,7 @@ class EventosLayout extends HorizontalSplitPanel {
             try {
                 nombre.validate();
                 divisa.validate();
-                EventoDAO.create(new Evento(nombre.getValue(), divisa.getValue(), usuario));
+                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario.getId());
                 mostrarEventos();
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
@@ -183,7 +183,7 @@ class EventosLayout extends HorizontalSplitPanel {
     }
 
     private Table getTablaEventos() {
-        List<Evento> eventos = EventoDAO.;
+        List<Evento> eventos = EventoDAO.readAll(usuario.getId());
         Table table = new Table("");
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Divisa", String.class, null);
@@ -210,7 +210,7 @@ class EventosLayout extends HorizontalSplitPanel {
     }
 
     private Table getTablaGastos(Evento e) {
-        List<Gasto> gastos = GastoDAO.readAll(e.getIdEvento());
+        List<Gasto> gastos = GastoDAO.readAll(e.getId());
         Table table = new Table("Gastos");
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Precio", Integer.class, null);
@@ -223,7 +223,7 @@ class EventosLayout extends HorizontalSplitPanel {
     }
 
     private Table getTablaParticipantes(Evento e) {
-        List<Participante> participantes = ParticipanteDAO.readAll(e.getIdEvento());
+        List<Participante> participantes = ParticipanteDAO.readAllFromEvento(e.getId());
         Table table = new Table("Participantes");
         table.addContainerProperty("Nombre", String.class, null);
         for (Participante p : participantes) {

@@ -9,6 +9,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -71,11 +72,26 @@ public class GastoDAO {
         }
         return new Gasto(id, nombre, precio, evento, pagador, deudores);
     }
+    
+    public static List<Gasto> readAll(String idEvento){
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("idEvento", idEvento);
+        DBCursor cursor = gastos.find(whereQuery);
+        List<Gasto> gastos = new ArrayList<>();
+        while(cursor.hasNext()){
+            BasicDBObject g = (BasicDBObject) cursor.next();
+            gastos.add(new Gasto(g.getString("_id"), g.getString("nombre"), g.getDouble("precio"), g.getString("idEvento"), g.getString("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getString("_id"))));
+        }
+        return gastos;
+    }
 
+    
     public static void delete(String id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) gastos.findOne(whereQuery);
         gastos.remove(document);
     }
+    
+   
 }

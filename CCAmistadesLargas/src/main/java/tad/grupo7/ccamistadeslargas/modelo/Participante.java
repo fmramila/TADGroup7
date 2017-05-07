@@ -45,6 +45,10 @@ public class Participante {
     public void setIdAmigoDe(String idAmigoDe) {
         this.idAmigoDe = idAmigoDe;
     }
+
+    public Object[] getArray() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 

@@ -87,6 +87,20 @@ public class ParticipanteDAO {
         return participantes;
     }
     
+    public static List<Participante> readAllDeudoresFromPago(String idPago) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", idPago);
+        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Pago").findOne(whereQuery);
+        BasicDBList participantesDB = (BasicDBList)document.get("deudores");
+        Iterator it = participantesDB.iterator();
+        List<Participante> participantes = new ArrayList<>();
+        while(it.hasNext()){
+            BasicDBObject p = (BasicDBObject) it.next();
+            participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+        }
+        return participantes;
+    }
+    
     
 //    public static BasicDBObject readDBObject(String id) {
 //        BasicDBObject whereQuery = new BasicDBObject();

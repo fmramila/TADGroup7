@@ -6,6 +6,7 @@
 package tad.grupo7.ccamistadeslargas.modelo;
 
 import java.util.List;
+import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
 
 
 /**
@@ -76,6 +77,10 @@ public class Gasto {
 
     public void setDeudores(List<Participante> deudores) {
         this.deudores = deudores;
+    }
+
+    public Object[] getArray() {
+        return new Object[]{getNombre(),getPrecio(),ParticipanteDAO.read(getIdPagador()).getNombre()};
     }
 
     
