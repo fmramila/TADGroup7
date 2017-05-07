@@ -9,13 +9,10 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import tad.grupo7.ccamistadeslargas.modelo.Participante;
+import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
@@ -24,13 +21,10 @@ import tad.grupo7.ccamistadeslargas.modelo.Usuario;
  */
 public class UsuarioDAO {
 
-    private static DB dataBase = null;
-    private static DBCollection usuarios = null;
+    private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
+    private static DBCollection usuarios = dataBase.getCollection("Usuario");
 
-    public UsuarioDAO() throws UnknownHostException {
-        dataBase = new MongoClient("localhost", 27017).getDB("CC");
-        usuarios = dataBase.getCollection("Usuario");
-    }
+    ;
 
     public static void create(String nombre, String password, String email) {
         BasicDBObject document = new BasicDBObject();
@@ -38,15 +32,38 @@ public class UsuarioDAO {
         document.append("password", password);
         document.append("email", email);
         usuarios.insert(document);
+        Usuario u = read(nombre, password);
+        addAmigo(nombre, u.getId()); //se añade a él mismo como amigo
+    }
+
+    public static void addAmigo(String nombre, String idAmigoDe) {
+        BasicDBList amigos = new BasicDBList();
+        try { //Si ya tiene amigos
+            amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
+            BasicDBObject amigo = new BasicDBObject();
+            amigo.append("nombre", nombre);
+            amigo.append("idAmigoDe", idAmigoDe);
+            amigos.add(amigo);
+        } catch (NullPointerException ex) { //Si es el primero
+            amigos = new BasicDBList();
+            BasicDBObject amigo = new BasicDBObject();
+            amigo.append("nombre", nombre);
+            amigo.append("idAmigoDe", idAmigoDe);
+            amigos.add(amigo);
+        }
+        BasicDBObject newUsuario = new BasicDBObject();
+        newUsuario.append("$set", new BasicDBObject().append("amigos", amigos));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", new ObjectId(idAmigoDe));
+        usuarios.update(oldUsuario, newUsuario);
     }
 
     public static void update(String id, String nombre, String password, String email) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", id);
-        BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
-        document.append("$set", new BasicDBObject().append("nombre", nombre));
-        document.append("$set", new BasicDBObject().append("password", password));
-        document.append("$set", new BasicDBObject().append("email", email));
+        BasicDBObject newUsuario = new BasicDBObject();
+        newUsuario.append("$set", new BasicDBObject().append("nombre", nombre));
+        newUsuario.append("$set", new BasicDBObject().append("password", password));
+        newUsuario.append("$set", new BasicDBObject().append("email", email));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", new ObjectId(id));
+        usuarios.update(oldUsuario, newUsuario);
     }
 
     public static void delete(String id) {
@@ -70,17 +87,17 @@ public class UsuarioDAO {
         BasicDBObject andQuery = new BasicDBObject();
         List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
         obj.add(new BasicDBObject("nombre", nombre));
-        obj.add(new BasicDBObject("password", "password"));
+        obj.add(new BasicDBObject("password", password));
         andQuery.put("$and", obj);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(andQuery);
         String email = document.getString("email");
         return new Usuario(document.getString("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getString("_id")));
     }
 
-//    public static BasicDBObject readDBObject(String id) {
-//        BasicDBObject whereQuery = new BasicDBObject();
-//        whereQuery.put("_id", id);
-//        BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
-//        return document;
-//    }
+    public static BasicDBObject readDBObject(String id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
+        return document;
+    }
 }

@@ -11,7 +11,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,13 +23,9 @@ import tad.grupo7.ccamistadeslargas.modelo.Participante;
  */
 public class GastoDAO {
 
-    private static DB dataBase = null;
-    private static DBCollection gastos = null;
+    private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
+    private static DBCollection gastos = dataBase.getCollection("Gasto");
 
-    public GastoDAO() throws UnknownHostException {
-        dataBase = new MongoClient("localhost", 27017).getDB("CC");
-        gastos = dataBase.getCollection("Gasto");
-    }
 
     public static void create(String nombre, Double precio, String idEvento, String idPagador, List<Participante> deudores) {
         BasicDBObject document = new BasicDBObject();
