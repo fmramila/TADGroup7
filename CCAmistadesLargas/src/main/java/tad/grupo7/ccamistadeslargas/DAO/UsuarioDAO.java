@@ -35,16 +35,16 @@ public class UsuarioDAO {
     }
 
     public static void addAmigo(String nombre, ObjectId idAmigoDe) {
-        BasicDBList amigos = new BasicDBList();
-        try { //Si ya tiene amigos
-            amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
-        } catch (NullPointerException ex) { //Si es el primero
-            amigos = new BasicDBList();
-        }
+        BasicDBList amigos = null;
         BasicDBObject amigo = new BasicDBObject();
         amigo.append("nombre", nombre);
         amigo.append("idAmigoDe", idAmigoDe);
-        amigos.add(amigo);
+        amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
+        if(amigos==null){ //Si es la primera vez
+            amigos = new BasicDBList();
+            ParticipanteDAO.create(nombre, idAmigoDe);
+        }
+        amigos.add(ParticipanteDAO.readDBObject(nombre,idAmigoDe));
         BasicDBObject newUsuario = new BasicDBObject();
         newUsuario.append("$set", new BasicDBObject().append("amigos", amigos));
         BasicDBObject oldUsuario = new BasicDBObject().append("_id", idAmigoDe);
@@ -61,10 +61,7 @@ public class UsuarioDAO {
     }
 
     public static void delete(ObjectId id) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", id);
-        BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
-        usuarios.remove(document);
+        usuarios.remove(new BasicDBObject().append("_id", id));
     }
 
     public static Usuario read(ObjectId id) {
@@ -77,17 +74,16 @@ public class UsuarioDAO {
         return new Usuario(id, nombre, password, email, ParticipanteDAO.readAllFromUsuario(id));
     }
 
-    public static Usuario read(String nombre, String password) {
+    public static Usuario read(String email, String password) {
         BasicDBObject andQuery = new BasicDBObject();
         List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-        obj.add(new BasicDBObject("nombre", nombre));
+        obj.add(new BasicDBObject("email", email));
         obj.add(new BasicDBObject("password", password));
         andQuery.put("$and", obj);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(andQuery);
         Usuario u = null;
         if (document != null) {
-            String email = document.getString("email");
-            u = new Usuario(document.getObjectId("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getObjectId("_id")));
+            u = new Usuario(document.getObjectId("_id"), document.getString("nombre"), password, email, ParticipanteDAO.readAllFromUsuario(document.getObjectId("_id")));
         }
         return u;
     }

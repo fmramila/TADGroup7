@@ -5,6 +5,7 @@
  */
 package tad.grupo7.ccamistadeslargas.DAO;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -21,9 +22,8 @@ import tad.grupo7.ccamistadeslargas.modelo.Evento;
  */
 public class EventoDAO {
 
-    private static DB dataBase =  new MongoClient("localhost", 27017).getDB("CC");;
+    private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
     private static DBCollection eventos = dataBase.getCollection("Evento");
-
 
     public static void create(String nombre, String divisa, ObjectId idCreador) {
         BasicDBObject document = new BasicDBObject();
@@ -31,8 +31,23 @@ public class EventoDAO {
         document.append("divisa", divisa);
         document.append("idCreador", idCreador);
         eventos.insert(document);
+        addParticipante(readDBObject(nombre, idCreador).getObjectId("_id"), idCreador);
     }
-    
+
+    public static void addParticipante(ObjectId idEvento, ObjectId idParticipante) {
+        BasicDBList participantes = null;
+        BasicDBObject participante = ParticipanteDAO.readDBObject(idParticipante);
+        participantes = (BasicDBList) readDBObject(idEvento).get("participantes");
+        if (participantes == null) { //Si es la primera vez
+            participantes = new BasicDBList();
+        }
+        participantes.add(participante);
+        BasicDBObject newEvento = new BasicDBObject();
+        newEvento.append("$set", new BasicDBObject().append("participantes", participantes));
+        BasicDBObject oldEvento = new BasicDBObject().append("_id", idEvento);
+        eventos.update(oldEvento, newEvento);
+    }
+
     public static Evento read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
@@ -40,7 +55,7 @@ public class EventoDAO {
         String nombre = document.getString("nombre");
         String divisa = document.getString("divisa");
         String idCreador = document.getString("idCreador");
-        Evento e = new Evento(id, nombre, divisa,idCreador,ParticipanteDAO.readAllFromEvento(id));
+        Evento e = new Evento(id, nombre, divisa, idCreador, ParticipanteDAO.readAllFromEvento(id));
         return e;
     }
 
@@ -51,20 +66,35 @@ public class EventoDAO {
         BasicDBObject oldEvento = new BasicDBObject().append("_id", id);
         eventos.update(oldEvento, newEvento);
     }
-    
-    public static List<Evento> readAll(ObjectId idUsuario){
+
+    public static List<Evento> readAll(ObjectId idUsuario) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("idCreador", idUsuario);
         DBCursor cursor = eventos.find(whereQuery);
         List<Evento> eventos = new ArrayList<>();
-        while(cursor.hasNext()){
+        while (cursor.hasNext()) {
             BasicDBObject e = (BasicDBObject) cursor.next();
-            eventos.add(new Evento(e.getObjectId("_id"),e.getString("nombre"),e.getString("divisa"),e.getString("idCreador"),ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
+            eventos.add(new Evento(e.getObjectId("_id"), e.getString("nombre"), e.getString("divisa"), e.getString("idCreador"), ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
         }
         return eventos;
     }
 
     public static void delete(ObjectId id) {
         eventos.remove(new BasicDBObject().append("_id", id));
+    }
+
+    public static BasicDBObject readDBObject(ObjectId id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        return (BasicDBObject) eventos.findOne(whereQuery);
+    }
+
+    public static BasicDBObject readDBObject(String nombre, ObjectId idCreador) {
+        BasicDBObject andQuery = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+        obj.add(new BasicDBObject("nombre", nombre));
+        obj.add(new BasicDBObject("idCreador", idCreador));
+        andQuery.put("$and", obj);
+        return (BasicDBObject) eventos.findOne(andQuery);
     }
 }

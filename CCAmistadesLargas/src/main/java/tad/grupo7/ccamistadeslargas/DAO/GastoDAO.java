@@ -83,10 +83,7 @@ public class GastoDAO {
 
     
     public static void delete(ObjectId id) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", id);
-        BasicDBObject document = (BasicDBObject) gastos.findOne(whereQuery);
-        gastos.remove(document);
+        gastos.remove(new BasicDBObject().append("_id", id));
     }
     
    

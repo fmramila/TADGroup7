@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
+import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
  *
@@ -25,7 +26,7 @@ public class ParticipanteDAO {
     private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
     private static DBCollection participantes = dataBase.getCollection("Participante");
 
-    public static void create(String nombre, String idAmigoDe) {
+    public static void create(String nombre, ObjectId idAmigoDe) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
         document.append("idAmigoDe", idAmigoDe);
@@ -40,10 +41,7 @@ public class ParticipanteDAO {
     }
 
     public static void delete(ObjectId id) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", id);
-        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
-        participantes.remove(document);
+        participantes.remove(new BasicDBObject().append("_id", id));
     }
 
     public static Participante read(ObjectId id) {
@@ -105,11 +103,18 @@ public class ParticipanteDAO {
         }
         return participantes;
     }
-
-//    public static BasicDBObject readDBObject(String id) {
-//        BasicDBObject whereQuery = new BasicDBObject();
-//       whereQuery.put("_id", id);
-//        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
-//        return document;
-//    }
+    
+    public static BasicDBObject readDBObject(String nombre, ObjectId idAmigoDe) {
+        BasicDBObject andQuery = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+        obj.add(new BasicDBObject("nombre", nombre));
+        obj.add(new BasicDBObject("idAmigoDe", idAmigoDe));
+        andQuery.put("$and", obj);
+        return (BasicDBObject) participantes.findOne(andQuery);
+    }
+    public static BasicDBObject readDBObject(ObjectId id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        return (BasicDBObject) participantes.findOne(whereQuery);
+    }
 }
