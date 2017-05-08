@@ -83,12 +83,4 @@ public class Gasto {
     public Object[] getArray() {
         return new Object[]{getNombre(),getPrecio(),ParticipanteDAO.read(getIdPagador()).getNombre()};
     }
-
-    
-
-    
-    
-
-    
-    
 }

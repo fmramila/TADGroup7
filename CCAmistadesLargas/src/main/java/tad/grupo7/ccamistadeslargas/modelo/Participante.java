@@ -16,9 +16,9 @@ import org.bson.types.ObjectId;
 public class Participante {
     private ObjectId id;
     private String nombre;
-    private String idAmigoDe;
+    private ObjectId idAmigoDe;
 
-    public Participante(ObjectId id, String nombre, String idAmigoDe) {
+    public Participante(ObjectId id, String nombre, ObjectId idAmigoDe) {
         this.id = id;
         this.nombre = nombre;
         this.idAmigoDe = idAmigoDe;
@@ -40,11 +40,11 @@ public class Participante {
         this.nombre = nombre;
     }
 
-    public String getIdAmigoDe() {
+    public ObjectId getIdAmigoDe() {
         return idAmigoDe;
     }
 
-    public void setIdAmigoDe(String idAmigoDe) {
+    public void setIdAmigoDe(ObjectId idAmigoDe) {
         this.idAmigoDe = idAmigoDe;
     }
 

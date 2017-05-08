@@ -63,7 +63,7 @@ public class GastoDAO {
         Iterator it = deudoresDB.iterator();
         while(it.hasNext()){
             BasicDBObject b = (BasicDBObject) it.next();
-            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getString("idAmigoDe"));
+            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getObjectId("idAmigoDe"));
             deudores.add(p);
         }
         return new Gasto(id, nombre, precio, evento, pagador, deudores);
@@ -76,7 +76,13 @@ public class GastoDAO {
         List<Gasto> gastos = new ArrayList<>();
         while(cursor.hasNext()){
             BasicDBObject g = (BasicDBObject) cursor.next();
-            gastos.add(new Gasto(g.getObjectId("_id"), g.getString("nombre"), g.getDouble("precio"), g.getObjectId("idEvento"), g.getObjectId("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getObjectId("_id"))));
+            ObjectId id = g.getObjectId("_id");
+            String nombre = g.getString("nombre");
+            Double precio = g.getDouble("precio");
+            ObjectId idPagador = g.getObjectId("idPagador");
+            List<Participante> deudores = ParticipanteDAO.readAllDeudoresFromPago(id);
+            gastos.add(new Gasto(id,nombre,precio,idEvento,idPagador,deudores));
+//            gastos.add(new Gasto(g.getObjectId("_id"), g.getString("nombre"), g.getDouble("precio"), g.getObjectId("idEvento"), g.getObjectId("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getObjectId("_id"))));
         }
         return gastos;
     }
