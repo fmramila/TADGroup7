@@ -110,7 +110,7 @@ class EventosLayout extends HorizontalSplitPanel {
         setFirstComponent(l);
     }
 
-     private void mostrarGasto(Gasto g) {
+     private void mostrarGasto(Gasto g, Evento e) {
          //FORMULARIO POR SI SE QUIERE EDITAR EL EVENTO
         TextField nombre = new TextField("Titulo");
         nombre.setValue(g.getNombre());
@@ -128,7 +128,8 @@ class EventosLayout extends HorizontalSplitPanel {
         //BOTÓN PARA ELIMINAR EL GASTO
         eliminar.addClickListener(clickEvent -> {
             GastoDAO.delete(g.getId());
-            setSecondComponent(null);
+            removeAllComponents();
+            mostrarEvento(e);
         });
         //AÑADIMOS LOS COMPONENTES
         FormLayout form = new FormLayout(nombre, precio, actualizar, eliminar);
@@ -269,7 +270,7 @@ class EventosLayout extends HorizontalSplitPanel {
             public void valueChange(Property.ValueChangeEvent event) {
                 try {
                     Gasto g = gastos.get(((int) table.getValue()) - 1);
-                    mostrarGasto(g);
+                    mostrarGasto(g,e);
                 } catch (Exception e) {
                 }
             }
