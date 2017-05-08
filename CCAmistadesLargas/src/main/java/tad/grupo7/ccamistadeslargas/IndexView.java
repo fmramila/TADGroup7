@@ -8,7 +8,7 @@ package tad.grupo7.ccamistadeslargas;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
@@ -17,22 +17,22 @@ import org.vaadin.teemusa.sidemenu.SideMenu;
  */
 @Theme("mytheme")
 public class IndexView extends SideMenu implements View{
-
-    private VerticalLayout mainLayout = new EventosLayout();
     
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+    public IndexView(){
         setMenuCaption("CCAmistadesLargas");
         addMenuItem("Eventos", () -> {
             removeAllComponents();
-            mainLayout = new EventosLayout();
-            addComponent(mainLayout);
+            addComponent(new EventosLayout());
         });
         addMenuItem("Usuarios", () -> {
             removeAllComponents();
-            mainLayout = new UsuariosLayout();
-            addComponent(mainLayout);
+            addComponent(new AmigosLayout());
         });
+    }
+    
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
     }
     
 }

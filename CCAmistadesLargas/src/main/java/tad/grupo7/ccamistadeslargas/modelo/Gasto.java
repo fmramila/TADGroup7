@@ -5,48 +5,39 @@
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
+import org.bson.types.ObjectId;
+import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
+
 
 /**
  *
  * @author cayetano
  */
-@Table
-@Entity
 public class Gasto {
 
-    @Column
-    @Id
-    private int idGasto;
-    @Column
+    private ObjectId id;
     private String nombre;
-    @Column
-    private Integer precio;
-    @Column
-    private int Usuario_idUsuario;
-    @Column
-    private int Evento_idEvento;
-    
-    public Gasto(){
-        
-    }
+    private Double precio;
+    private ObjectId idEvento;
+    private ObjectId idPagador;
+    private List<Participante> deudores;
 
-    public Gasto(String nombre, Integer precio, int Usuario_idUsuario, int Evento_idEvento) {
+    public Gasto(ObjectId id, String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
+        this.id = id;
         this.nombre = nombre;
         this.precio = precio;
-        this.Usuario_idUsuario = Usuario_idUsuario;
-        this.Evento_idEvento = Evento_idEvento;
+        this.idEvento = idEvento;
+        this.idPagador = idPagador;
+        this.deudores = deudores;
     }
 
-    public int getIdGasto() {
-        return idGasto;
+    public ObjectId getId() {
+        return id;
     }
 
-    public void setIdGasto(int idGasto) {
-        this.idGasto = idGasto;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -57,29 +48,47 @@ public class Gasto {
         this.nombre = nombre;
     }
 
-    public Integer getPrecio() {
+    public Double getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Integer precio) {
+    public void setPrecio(Double precio) {
         this.precio = precio;
     }
 
-    public int getUsuario_idUsuario() {
-        return Usuario_idUsuario;
+    public ObjectId getIdEvento() {
+        return idEvento;
     }
 
-    public void setUsuario_idUsuario(int Usuario_idUsuario) {
-        this.Usuario_idUsuario = Usuario_idUsuario;
+    public void setIdEvento(ObjectId idEvento) {
+        this.idEvento = idEvento;
     }
 
-    public int getEvento_idEvento() {
-        return Evento_idEvento;
+    public ObjectId getIdPagador() {
+        return idPagador;
     }
 
-    public void setEvento_idEvento(int Evento_idEvento) {
-        this.Evento_idEvento = Evento_idEvento;
+    public void setIdPagador(ObjectId idPagador) {
+        this.idPagador = idPagador;
     }
+
+    public List<Participante> getDeudores() {
+        return deudores;
+    }
+
+    public void setDeudores(List<Participante> deudores) {
+        this.deudores = deudores;
+    }
+
+    public Object[] getArray() {
+        return new Object[]{getNombre(),getPrecio(),ParticipanteDAO.read(getIdPagador()).getNombre()};
+    }
+
+    
+
+    
+    
+
     
     
 }

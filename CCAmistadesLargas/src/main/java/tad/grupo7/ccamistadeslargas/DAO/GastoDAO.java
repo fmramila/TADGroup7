@@ -5,58 +5,86 @@
  */
 package tad.grupo7.ccamistadeslargas.DAO;
 
-import org.hibernate.Query;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.classic.Session;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
+import tad.grupo7.ccamistadeslargas.modelo.Participante;
 
 /**
  *
  * @author cayetano
  */
 public class GastoDAO {
-    static final AnnotationConfiguration configuration = new AnnotationConfiguration().addPackage("net.srirangan.packt.maven.TestHibernateApp.domain").addAnnotatedClass(Gasto.class);
-    static Session session = null;
-    
-    public static void create(Gasto g){
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        session.save(g);
-        tx.commit();
-        session.close();
+
+    private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
+    private static DBCollection gastos = dataBase.getCollection("Gasto");
+
+
+    public static void create(String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
+        BasicDBObject document = new BasicDBObject();
+        document.append("nombre", nombre);
+        document.append("precio", precio);
+        document.append("idEvento", idEvento);
+        document.append("idPagador", idPagador);
+        BasicDBList deudoresDB = new BasicDBList();
+        for (Participante p : deudores) {
+            BasicDBObject d = new BasicDBObject();
+            d.append("nombre", p.getNombre());
+            d.append("idAmigoDe", p.getIdAmigoDe());
+            deudoresDB.add(d);
+        }
+        document.append("deudores", deudoresDB);
+        gastos.insert(document);
+    }
+
+    public static void update(ObjectId id, String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
+        delete(id);
+        create(nombre, precio, idEvento, idPagador, deudores);
+    }
+
+    public static Gasto read(ObjectId id) {
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("_id", id);
+        BasicDBObject document = (BasicDBObject) gastos.findOne(whereQuery);
+        String nombre = document.getString("nombre");
+        Double precio = (Double) document.get("precio");
+        ObjectId evento = document.getObjectId("idEvento");
+        ObjectId pagador = document.getObjectId("idPagador");
+        List<Participante> deudores = new ArrayList<>();
+        BasicDBList deudoresDB = (BasicDBList) document.get("deudores");
+        Iterator it = deudoresDB.iterator();
+        while(it.hasNext()){
+            BasicDBObject b = (BasicDBObject) it.next();
+            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getString("idAmigoDe"));
+            deudores.add(p);
+        }
+        return new Gasto(id, nombre, precio, evento, pagador, deudores);
     }
     
-    public static void update(int id, String nombre, Integer precio, int Usuario_idUsuario, int Evento_idEvento){
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Gasto WHERE idGasto = "+id);
-        Gasto g = (Gasto) q.uniqueResult();
-        g.setNombre(nombre);
-        g.setPrecio(precio);
-        g.setUsuario_idUsuario(Usuario_idUsuario);
-        g.setEvento_idEvento(Evento_idEvento);
-        session.update(g);
-        tx.commit();
-        session.close();
+    public static List<Gasto> readAll(ObjectId idEvento){
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("idEvento", idEvento);
+        DBCursor cursor = gastos.find(whereQuery);
+        List<Gasto> gastos = new ArrayList<>();
+        while(cursor.hasNext()){
+            BasicDBObject g = (BasicDBObject) cursor.next();
+            gastos.add(new Gasto(g.getObjectId("_id"), g.getString("nombre"), g.getDouble("precio"), g.getObjectId("idEvento"), g.getObjectId("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getObjectId("_id"))));
+        }
+        return gastos;
+    }
+
+    
+    public static void delete(ObjectId id) {
+        gastos.remove(new BasicDBObject().append("_id", id));
     }
     
-    public static Gasto read(int id){
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Gasto WHERE idGasto = "+id);
-        Gasto g = (Gasto) q.uniqueResult();
-        tx.commit();
-        session.close();
-        return g;
-    }
-    
-    public static void delete(int id){
-        session = configuration.buildSessionFactory().openSession();
-        org.hibernate.Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Gasto WHERE idGasto = "+id);
-        Gasto g = (Gasto) q.uniqueResult();
-        session.delete(g);
-        tx.commit();
-        session.close();
-    }
+   
 }

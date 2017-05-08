@@ -29,6 +29,7 @@ public class NavigatorUI extends UI {
         // Create and register the views
         navigator.addView("", new LoginView());
         navigator.addView("index", new IndexView());
+        navigator.addView("registrar", new RegistrarView());
     }
 
     @WebServlet(urlPatterns = "/*", name = "NavigatorUIServlet", asyncSupported = true)

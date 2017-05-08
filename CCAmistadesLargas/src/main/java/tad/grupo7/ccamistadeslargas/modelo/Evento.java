@@ -5,38 +5,34 @@
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
+import org.bson.types.ObjectId;
 
-@Table
-@Entity
+
 public class Evento {
 
-    @Column
-    @Id
-    private int idEvento;
-    @Column
+    private ObjectId id;
     private String nombre;
-    @Column
     private String divisa;
+    private String idCreador;
+    private List<Participante> participantes;
 
-    public Evento() {
-    }
-
-    public Evento(String nombre, String divisa) {
+    public Evento(ObjectId id, String nombre, String divisa, String idCreador, List<Participante> participantes) {
+        this.id = id;
         this.nombre = nombre;
         this.divisa = divisa;
-    }
-    
-    public int getIdEvento() {
-        return idEvento;
+        this.idCreador = idCreador;
+        this.participantes = participantes;
     }
 
-    public void setIdEvento(int idEvento) {
-        this.idEvento = idEvento;
+    public ObjectId getId() {
+        return id;
     }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
 
     public String getNombre() {
         return nombre;
@@ -53,7 +49,32 @@ public class Evento {
     public void setDivisa(String divisa) {
         this.divisa = divisa;
     }
-    
-  
 
+    public String getIdCreador() {
+        return idCreador;
+    }
+
+    public void setIdCreador(String idCreador) {
+        this.idCreador = idCreador;
+    }
+
+    public List<Participante> getParticipantes() {
+        return participantes;
+    }
+
+    public void setParticipantes(List<Participante> participantes) {
+        this.participantes = participantes;
+    }
+
+    public String[] getArray() {
+        return new String[]{getNombre(),getDivisa()};
+    }
+    
+    
+    
+
+   
+
+    
+    
 }
