@@ -48,8 +48,8 @@ public class Participante {
         this.idAmigoDe = idAmigoDe;
     }
 
-    public Object[] getArray() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String[] getArray() {
+        return new String[]{getNombre()};
     }
     
     

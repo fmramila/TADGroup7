@@ -12,9 +12,9 @@ import com.vaadin.ui.VerticalLayout;
  *
  * @author cayetano
  */
-class UsuariosLayout extends HorizontalSplitPanel {
+class AmigosLayout extends HorizontalSplitPanel {
 
-    public UsuariosLayout() {
+    public AmigosLayout() {
     }
     
 }

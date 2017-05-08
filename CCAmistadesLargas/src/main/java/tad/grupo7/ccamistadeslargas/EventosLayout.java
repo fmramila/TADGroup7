@@ -70,6 +70,7 @@ class EventosLayout extends HorizontalSplitPanel {
      */
     private void mostrarEvento(Evento e) {
         //FORMULARIO POR SI SE QUIERE EDITAR EL EVENTO
+        System.out.println("\nHOLAA"+e.getNombre()+"\n");
         TextField nombre = new TextField("Nombre");
         nombre.setValue(e.getNombre());
         TextField divisa = new TextField("Divisa");
@@ -171,7 +172,7 @@ class EventosLayout extends HorizontalSplitPanel {
             try {
                 nombre.validate();
                 divisa.validate();
-                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario.getId());
+                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario);
                 mostrarEventos();
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
@@ -203,7 +204,6 @@ class EventosLayout extends HorizontalSplitPanel {
                     Evento e = eventos.get(((int) table.getValue()) - 1);
                     mostrarEvento(e);
                 } catch (Exception e) {
-
                 }
             }
         });

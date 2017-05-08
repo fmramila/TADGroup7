@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Evento;
+import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
  *
@@ -25,13 +26,14 @@ public class EventoDAO {
     private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
     private static DBCollection eventos = dataBase.getCollection("Evento");
 
-    public static void create(String nombre, String divisa, ObjectId idCreador) {
+    public static void create(String nombre, String divisa, Usuario creador) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
         document.append("divisa", divisa);
-        document.append("idCreador", idCreador);
+        document.append("idCreador", creador.getId());
         eventos.insert(document);
-        addParticipante(readDBObject(nombre, idCreador).getObjectId("_id"), idCreador);
+        ObjectId o = ParticipanteDAO.readDBObject(creador.getAmigos().get(0).getId()).getObjectId("_id");
+        addParticipante(readDBObject(nombre, creador.getId()).getObjectId("_id"), o);
     }
 
     public static void addParticipante(ObjectId idEvento, ObjectId idParticipante) {
