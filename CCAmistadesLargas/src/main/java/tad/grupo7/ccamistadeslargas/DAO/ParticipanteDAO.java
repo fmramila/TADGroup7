@@ -32,21 +32,21 @@ public class ParticipanteDAO {
         participantes.insert(document);
     }
 
-    public static void update(String id, String nombre) {
+    public static void update(ObjectId id, String nombre) {
         BasicDBObject newParticipante = new BasicDBObject();
         newParticipante.append("$set", new BasicDBObject().append("nombre", nombre));
-        BasicDBObject oldParticipante = new BasicDBObject().append("_id", new ObjectId(id));
+        BasicDBObject oldParticipante = new BasicDBObject().append("_id", id);
         participantes.update(oldParticipante, newParticipante);
     }
 
-    public static void delete(String id) {
+    public static void delete(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
         participantes.remove(document);
     }
 
-    public static Participante read(String id) {
+    public static Participante read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
@@ -55,7 +55,7 @@ public class ParticipanteDAO {
         return new Participante(id, nombre, idAmigoDe);
     }
 
-    public static List<Participante> readAllFromEvento(String idEvento) {
+    public static List<Participante> readAllFromEvento(ObjectId idEvento) {
         List<Participante> participantes = new ArrayList<>();
         try {
             BasicDBObject whereQuery = new BasicDBObject();
@@ -66,14 +66,14 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
         return participantes;
     }
 
-    public static List<Participante> readAllFromUsuario(String idUsuario) {
+    public static List<Participante> readAllFromUsuario(ObjectId idUsuario) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", idUsuario);
         BasicDBObject document = (BasicDBObject) dataBase.getCollection("Usuario").findOne(whereQuery);
@@ -84,7 +84,7 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
@@ -92,7 +92,7 @@ public class ParticipanteDAO {
         return participantes;
     }
 
-    public static List<Participante> readAllDeudoresFromPago(String idPago) {
+    public static List<Participante> readAllDeudoresFromPago(ObjectId idPago) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", idPago);
         BasicDBObject document = (BasicDBObject) dataBase.getCollection("Pago").findOne(whereQuery);
@@ -101,7 +101,7 @@ public class ParticipanteDAO {
         List<Participante> participantes = new ArrayList<>();
         while (it.hasNext()) {
             BasicDBObject p = (BasicDBObject) it.next();
-            participantes.add(new Participante(p.getString("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+            participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
         }
         return participantes;
     }

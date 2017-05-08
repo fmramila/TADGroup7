@@ -25,7 +25,7 @@ public class EventoDAO {
     private static DBCollection eventos = dataBase.getCollection("Evento");
 
 
-    public static void create(String nombre, String divisa, String idCreador) {
+    public static void create(String nombre, String divisa, ObjectId idCreador) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
         document.append("divisa", divisa);
@@ -33,7 +33,7 @@ public class EventoDAO {
         eventos.insert(document);
     }
     
-    public static Evento read(String id) {
+    public static Evento read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) eventos.findOne(whereQuery);
@@ -44,30 +44,27 @@ public class EventoDAO {
         return e;
     }
 
-    public static void update(String id, String nombre, String divisa) {
+    public static void update(ObjectId id, String nombre, String divisa) {
         BasicDBObject newEvento = new BasicDBObject();
         newEvento.append("$set", new BasicDBObject().append("nombre", nombre));
         newEvento.append("$set", new BasicDBObject().append("divisa", divisa));
-        BasicDBObject oldEvento = new BasicDBObject().append("_id", new ObjectId(id));
+        BasicDBObject oldEvento = new BasicDBObject().append("_id", id);
         eventos.update(oldEvento, newEvento);
     }
     
-    public static List<Evento> readAll(String idUsuario){
+    public static List<Evento> readAll(ObjectId idUsuario){
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("idCreador", idUsuario);
         DBCursor cursor = eventos.find(whereQuery);
         List<Evento> eventos = new ArrayList<>();
         while(cursor.hasNext()){
             BasicDBObject e = (BasicDBObject) cursor.next();
-            eventos.add(new Evento(e.getString("_id"),e.getString("nombre"),e.getString("divisa"),e.getString("idCreador"),ParticipanteDAO.readAllFromEvento(e.getString("_id"))));
+            eventos.add(new Evento(e.getObjectId("_id"),e.getString("nombre"),e.getString("divisa"),e.getString("idCreador"),ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
         }
         return eventos;
     }
 
-    public static void delete(String id) {
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("i_d", id);
-        BasicDBObject document = (BasicDBObject) eventos.findOne(whereQuery);
-        eventos.remove(document);
+    public static void delete(ObjectId id) {
+        eventos.remove(new BasicDBObject().append("_id", id));
     }
 }

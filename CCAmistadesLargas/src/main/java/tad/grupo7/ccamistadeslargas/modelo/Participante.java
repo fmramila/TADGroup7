@@ -7,26 +7,28 @@ amigoDe:usuario
  */
 package tad.grupo7.ccamistadeslargas.modelo;
 
+import org.bson.types.ObjectId;
+
 /**
  *
  * @author naiara
  */
 public class Participante {
-    private String id;
+    private ObjectId id;
     private String nombre;
     private String idAmigoDe;
 
-    public Participante(String id, String nombre, String idAmigoDe) {
+    public Participante(ObjectId id, String nombre, String idAmigoDe) {
         this.id = id;
         this.nombre = nombre;
         this.idAmigoDe = idAmigoDe;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

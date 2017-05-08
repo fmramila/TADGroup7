@@ -14,6 +14,7 @@ import com.mongodb.MongoClient;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
 
@@ -27,7 +28,7 @@ public class GastoDAO {
     private static DBCollection gastos = dataBase.getCollection("Gasto");
 
 
-    public static void create(String nombre, Double precio, String idEvento, String idPagador, List<Participante> deudores) {
+    public static void create(String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
         document.append("precio", precio);
@@ -44,44 +45,44 @@ public class GastoDAO {
         gastos.insert(document);
     }
 
-    public static void update(String id, String nombre, Double precio, String idEvento, String idPagador, List<Participante> deudores) {
+    public static void update(ObjectId id, String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
         delete(id);
         create(nombre, precio, idEvento, idPagador, deudores);
     }
 
-    public static Gasto read(String id) {
+    public static Gasto read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) gastos.findOne(whereQuery);
         String nombre = document.getString("nombre");
         Double precio = (Double) document.get("precio");
-        String evento = document.getString("idEvento");
-        String pagador = document.getString("idPagador");
+        ObjectId evento = document.getObjectId("idEvento");
+        ObjectId pagador = document.getObjectId("idPagador");
         List<Participante> deudores = new ArrayList<>();
         BasicDBList deudoresDB = (BasicDBList) document.get("deudores");
         Iterator it = deudoresDB.iterator();
         while(it.hasNext()){
             BasicDBObject b = (BasicDBObject) it.next();
-            Participante p = new Participante(b.getString("_id"), b.getString("nombre"), b.getString("idAmigoDe"));
+            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getString("idAmigoDe"));
             deudores.add(p);
         }
         return new Gasto(id, nombre, precio, evento, pagador, deudores);
     }
     
-    public static List<Gasto> readAll(String idEvento){
+    public static List<Gasto> readAll(ObjectId idEvento){
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("idEvento", idEvento);
         DBCursor cursor = gastos.find(whereQuery);
         List<Gasto> gastos = new ArrayList<>();
         while(cursor.hasNext()){
             BasicDBObject g = (BasicDBObject) cursor.next();
-            gastos.add(new Gasto(g.getString("_id"), g.getString("nombre"), g.getDouble("precio"), g.getString("idEvento"), g.getString("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getString("_id"))));
+            gastos.add(new Gasto(g.getObjectId("_id"), g.getString("nombre"), g.getDouble("precio"), g.getObjectId("idEvento"), g.getObjectId("idPagador"), ParticipanteDAO.readAllDeudoresFromPago(g.getObjectId("_id"))));
         }
         return gastos;
     }
 
     
-    public static void delete(String id) {
+    public static void delete(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) gastos.findOne(whereQuery);

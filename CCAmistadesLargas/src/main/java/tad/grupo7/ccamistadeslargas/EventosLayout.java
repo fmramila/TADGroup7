@@ -23,6 +23,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.List;
 import com.vaadin.ui.UI;
+import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.DAO.EventoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.GastoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
@@ -110,7 +111,7 @@ class EventosLayout extends HorizontalSplitPanel {
      *
      * @param idEvento ID del Evento al que se quiere añadir un gasto.
      */
-    private void mostrarFormularioAddGasto(String idEvento) {
+    private void mostrarFormularioAddGasto(ObjectId idEvento) {
         //SE CREA LA VENTANA EMERGENTE
         final Window subWindow = new Window("Añadir Pago");
         VerticalLayout subContent = new VerticalLayout();
@@ -135,7 +136,7 @@ class EventosLayout extends HorizontalSplitPanel {
                     titulo.validate();
                     precio.validate();
                     pagador.validate();
-                    GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), idEvento, pagador.getValue().toString(), null);
+                    GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), idEvento, new ObjectId(pagador.getValue().toString()), null);
                     titulo.setValue("");
                     precio.setValue("");
                     pagador.setValue("");

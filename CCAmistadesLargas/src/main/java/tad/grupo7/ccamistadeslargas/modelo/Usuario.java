@@ -11,6 +11,7 @@ amigos:{participante1, particpante2,...}
 package tad.grupo7.ccamistadeslargas.modelo;
 
 import java.util.List;
+import org.bson.types.ObjectId;
 
 
 /**
@@ -19,13 +20,13 @@ import java.util.List;
  */
 public class Usuario {
 
-    private String id;
+    private ObjectId id;
     private String nombre;
     private String password;
     private String email;
     private List<Participante> amigos;
 
-    public Usuario(String id, String nombre, String password, String email, List<Participante> amigos) {
+    public Usuario(ObjectId id, String nombre, String password, String email, List<Participante> amigos) {
         this.id = id;
         this.nombre = nombre;
         this.password = password;
@@ -33,11 +34,11 @@ public class Usuario {
         this.amigos = amigos;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

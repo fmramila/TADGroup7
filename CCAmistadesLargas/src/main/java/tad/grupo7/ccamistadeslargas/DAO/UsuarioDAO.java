@@ -34,44 +34,40 @@ public class UsuarioDAO {
         addAmigo(nombre, u.getId()); //se añade a él mismo como amigo
     }
 
-    public static void addAmigo(String nombre, String idAmigoDe) {
+    public static void addAmigo(String nombre, ObjectId idAmigoDe) {
         BasicDBList amigos = new BasicDBList();
         try { //Si ya tiene amigos
             amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
-            BasicDBObject amigo = new BasicDBObject();
-            amigo.append("nombre", nombre);
-            amigo.append("idAmigoDe", idAmigoDe);
-            amigos.add(amigo);
         } catch (NullPointerException ex) { //Si es el primero
             amigos = new BasicDBList();
-            BasicDBObject amigo = new BasicDBObject();
-            amigo.append("nombre", nombre);
-            amigo.append("idAmigoDe", idAmigoDe);
-            amigos.add(amigo);
         }
+        BasicDBObject amigo = new BasicDBObject();
+        amigo.append("nombre", nombre);
+        amigo.append("idAmigoDe", idAmigoDe);
+        amigos.add(amigo);
         BasicDBObject newUsuario = new BasicDBObject();
         newUsuario.append("$set", new BasicDBObject().append("amigos", amigos));
-        BasicDBObject oldUsuario = new BasicDBObject().append("_id", new ObjectId(idAmigoDe));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", idAmigoDe);
         usuarios.update(oldUsuario, newUsuario);
     }
 
-    public static void update(String id, String nombre, String password, String email) {
+    public static void update(ObjectId id, String nombre, String password, String email) {
         BasicDBObject newUsuario = new BasicDBObject();
         newUsuario.append("$set", new BasicDBObject().append("nombre", nombre));
         newUsuario.append("$set", new BasicDBObject().append("password", password));
         newUsuario.append("$set", new BasicDBObject().append("email", email));
-        BasicDBObject oldUsuario = new BasicDBObject().append("_id", new ObjectId(id));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", id);
         usuarios.update(oldUsuario, newUsuario);
     }
 
-    public static void delete(String id) {
+    public static void delete(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
         usuarios.remove(document);
     }
 
-    public static Usuario read(String id) {
+    public static Usuario read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
@@ -91,12 +87,12 @@ public class UsuarioDAO {
         Usuario u = null;
         if (document != null) {
             String email = document.getString("email");
-            u = new Usuario(document.getString("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getString("_id")));
+            u = new Usuario(document.getObjectId("_id"), nombre, password, email, ParticipanteDAO.readAllFromUsuario(document.getObjectId("_id")));
         }
         return u;
     }
 
-    public static BasicDBObject readDBObject(String id) {
+    public static BasicDBObject readDBObject(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);

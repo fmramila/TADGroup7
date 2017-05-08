@@ -6,6 +6,7 @@
 package tad.grupo7.ccamistadeslargas.modelo;
 
 import java.util.List;
+import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
 
 
@@ -15,14 +16,14 @@ import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
  */
 public class Gasto {
 
-    private String id;
+    private ObjectId id;
     private String nombre;
     private Double precio;
-    private String idEvento;
-    private String idPagador;
+    private ObjectId idEvento;
+    private ObjectId idPagador;
     private List<Participante> deudores;
 
-    public Gasto(String id, String nombre, Double precio, String idEvento, String idPagador, List<Participante> deudores) {
+    public Gasto(ObjectId id, String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
@@ -31,11 +32,11 @@ public class Gasto {
         this.deudores = deudores;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -55,19 +56,19 @@ public class Gasto {
         this.precio = precio;
     }
 
-    public String getIdEvento() {
+    public ObjectId getIdEvento() {
         return idEvento;
     }
 
-    public void setIdEvento(String idEvento) {
+    public void setIdEvento(ObjectId idEvento) {
         this.idEvento = idEvento;
     }
 
-    public String getIdPagador() {
+    public ObjectId getIdPagador() {
         return idPagador;
     }
 
-    public void setIdPagador(String idPagador) {
+    public void setIdPagador(ObjectId idPagador) {
         this.idPagador = idPagador;
     }
 
