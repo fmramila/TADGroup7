@@ -18,16 +18,12 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.List;
-import com.vaadin.ui.UI;
 import java.util.ArrayList;
-import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.DAO.EventoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.GastoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
@@ -283,6 +279,7 @@ class EventosLayout extends HorizontalSplitPanel {
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Precio", Double.class, null);
         table.addContainerProperty("Pagador", String.class, null);
+        table.addContainerProperty("Deudores", String.class, null);
         for (Gasto g : gastos) {
             table.addItem(g.getArray(), null);
         }
