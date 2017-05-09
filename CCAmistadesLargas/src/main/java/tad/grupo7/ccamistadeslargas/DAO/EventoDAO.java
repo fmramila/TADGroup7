@@ -63,8 +63,10 @@ public class EventoDAO {
 
     public static void update(ObjectId id, String nombre, String divisa) {
         BasicDBObject newEvento = new BasicDBObject();
-        newEvento.append("$set", new BasicDBObject().append("nombre", nombre));
-        newEvento.append("$set", new BasicDBObject().append("divisa", divisa));
+        BasicDBObject atributos = new BasicDBObject();
+        atributos.append("nombre", nombre);
+        atributos.append("divisa", divisa);
+        newEvento.append("$set", atributos);
         BasicDBObject oldEvento = new BasicDBObject().append("_id", id);
         eventos.update(oldEvento, newEvento);
     }

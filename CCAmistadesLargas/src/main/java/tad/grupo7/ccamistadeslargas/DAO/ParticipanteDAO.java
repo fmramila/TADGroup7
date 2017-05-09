@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
-import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
  *

@@ -89,6 +89,7 @@ class EventosLayout extends HorizontalSplitPanel {
             Notification n = new Notification("Evento actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
             n.setPosition(Position.TOP_CENTER);
             n.show(Page.getCurrent());
+            mostrarEventos();
         });
         //BOTÓN PARA QUE SALGA UNA VENTANA EMERGENTE PARA AÑADIR UN GASTO AL EVENTO
         addPago.addClickListener(clickEvent -> {
@@ -109,7 +110,7 @@ class EventosLayout extends HorizontalSplitPanel {
         //TABLA CON TODOS LOS PARTICIPANTES DEL EVENTO
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, divisa, actualizar, eliminar, addPago);
+        FormLayout form = new FormLayout(nombre, divisa, actualizar, eliminar, addPago,addParticipante);
         VerticalLayout l = new VerticalLayout(form, tablaGastos, tablaParticipantes);
         l.setMargin(true);
         setFirstComponent(l);
@@ -129,6 +130,8 @@ class EventosLayout extends HorizontalSplitPanel {
             Notification n = new Notification("Gasto actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
             n.setPosition(Position.TOP_CENTER);
             n.show(Page.getCurrent());
+            setSecondComponent(null);
+            mostrarEvento(e);
         });
         //BOTÓN PARA ELIMINAR EL GASTO
         eliminar.addClickListener(clickEvent -> {
@@ -173,27 +176,29 @@ class EventosLayout extends HorizontalSplitPanel {
     }
     
     private void mostrarFormularioAddParticipante(Evento e) {
-        TextField nombre = new TextField("Nombre");
-        nombre.setRequired(true);
-        TextField divisa = new TextField("Divisa");
-        divisa.setRequired(true);
-        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres", 1, 3, false));
-        final Button add = new Button("Crear evento");
+        List<Participante> participantes = ParticipanteDAO.readAllFromUsuario(usuario.getId());
+        ComboBox nuevoParticipante = new ComboBox("Participante Nuevo");
+        for (Participante p : participantes) {
+            nuevoParticipante.addItem(p.getNombre());
+        }
+        final Button add = new Button("Añadir participante");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        FormLayout form = new FormLayout(nombre, divisa, add);
         add.addClickListener(clickEvent -> {
             try {
-                nombre.validate();
-                divisa.validate();
-                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario);
-                mostrarEventos();
+                EventoDAO.addParticipante(e.getId(), ParticipanteDAO.read(nuevoParticipante.getValue().toString()).getId());
+                Notification n = new Notification("Participante añadido", Notification.Type.ASSISTIVE_NOTIFICATION);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+                setSecondComponent(null);
+                mostrarEvento(e);
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
                 n.setPosition(Position.TOP_CENTER);
                 n.show(Page.getCurrent());
             }
         });
+        FormLayout form = new FormLayout(nuevoParticipante,add);
         form.setMargin(true);
         setSecondComponent(form);
     }
