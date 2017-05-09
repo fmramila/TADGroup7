@@ -49,7 +49,7 @@ public class ParticipanteDAO {
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
         String nombre = document.getString("nombre");
-        String idAmigoDe = document.getString("idAmigoDe");
+        ObjectId idAmigoDe = document.getObjectId("idAmigoDe");
         return new Participante(id, nombre, idAmigoDe);
     }
 
@@ -64,7 +64,7 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
@@ -82,7 +82,7 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
@@ -99,7 +99,7 @@ public class ParticipanteDAO {
         List<Participante> participantes = new ArrayList<>();
         while (it.hasNext()) {
             BasicDBObject p = (BasicDBObject) it.next();
-            participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+            participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
         }
         return participantes;
     }

@@ -63,7 +63,7 @@ public class GastoDAO {
         Iterator it = deudoresDB.iterator();
         while(it.hasNext()){
             BasicDBObject b = (BasicDBObject) it.next();
-            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getString("idAmigoDe"));
+            Participante p = new Participante(b.getObjectId("_id"), b.getString("nombre"), b.getObjectId("idAmigoDe"));
             deudores.add(p);
         }
         return new Gasto(id, nombre, precio, evento, pagador, deudores);

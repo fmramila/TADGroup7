@@ -11,6 +11,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
@@ -50,6 +51,57 @@ public class UsuarioDAO {
         BasicDBObject oldUsuario = new BasicDBObject().append("_id", idAmigoDe);
         usuarios.update(oldUsuario, newUsuario);
     }
+    
+    public static void updateAmigo(String nombre, ObjectId idAmigoDe,ObjectId idUsuario) {
+        BasicDBList amigos;
+        ObjectId idAmigoDe2;
+        BasicDBList newAmigos = new BasicDBList();
+        BasicDBObject amigo = new BasicDBObject();
+        amigo.append("nombre", nombre);
+        amigo.append("idAmigoDe",idUsuario );
+        amigos = (BasicDBList) readDBObject(idUsuario).get("amigos");
+        Iterator it= amigos.iterator();
+       while(it.hasNext()){
+            BasicDBObject amigoL=(BasicDBObject) it.next();
+            idAmigoDe2=(ObjectId) amigoL.get("_id");
+            if(idAmigoDe2.equals(idAmigoDe)){
+                amigo.append("_id", idAmigoDe2);
+                newAmigos.add(amigo);
+            }else{
+                newAmigos.add(amigoL);
+            }
+        }
+        BasicDBObject newUsuario = new BasicDBObject();
+        newUsuario.append("$set", new BasicDBObject().append("amigos", newAmigos));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", idUsuario);
+        usuarios.update(oldUsuario, newUsuario);
+    }
+    
+    public static void removeAmigo(String nombre, ObjectId idAmigoDe) {
+        BasicDBList amigos;
+        String nombre2;
+        ObjectId idAmigoDe2;
+        BasicDBList newAmigos = new BasicDBList();
+        BasicDBObject amigo = new BasicDBObject();
+        amigo.append("nombre", nombre);
+        amigo.append("idAmigoDe", idAmigoDe);
+        amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
+        Iterator it= amigos.iterator();
+       while(it.hasNext()){
+            BasicDBObject amigoL=(BasicDBObject) it.next();
+            nombre2=(String) amigoL.get("nombre");
+            idAmigoDe2=(ObjectId) amigoL.get("idAmigoDe");
+            if(nombre2.equals(nombre) && idAmigoDe2.equals(idAmigoDe)){
+            }else{
+                newAmigos.add(amigoL);
+            }
+        }
+        //amigos.remove(ParticipanteDAO.readDBObject(nombre,idAmigoDe));
+        BasicDBObject newUsuario = new BasicDBObject();
+        newUsuario.append("$set", new BasicDBObject().append("amigos", newAmigos));
+        BasicDBObject oldUsuario = new BasicDBObject().append("_id", idAmigoDe);
+        usuarios.update(oldUsuario, newUsuario);
+    }
 
     public static void update(ObjectId id, String nombre, String password, String email) {
         BasicDBObject newUsuario = new BasicDBObject();
@@ -76,7 +128,7 @@ public class UsuarioDAO {
 
     public static Usuario read(String email, String password) {
         BasicDBObject andQuery = new BasicDBObject();
-        List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+        List<BasicDBObject> obj = new ArrayList<>();
         obj.add(new BasicDBObject("email", email));
         obj.add(new BasicDBObject("password", password));
         andQuery.put("$and", obj);
