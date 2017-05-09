@@ -82,6 +82,7 @@ class EventosLayout extends HorizontalSplitPanel {
         final Button actualizar = new Button("Actualizar Evento");
         final Button eliminar = new Button("Eliminar Evento");
         final Button addPago = new Button("Añadir Pago");
+        final Button addParticipante = new Button("Añadir Participante");
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
             EventoDAO.update(e.getId(), nombre.getValue(), divisa.getValue());
@@ -98,6 +99,10 @@ class EventosLayout extends HorizontalSplitPanel {
             EventoDAO.delete(e.getId());
             removeAllComponents();
             mostrarEventos();
+        });
+        //BOTÓN PARA AÑADIR PARTICIPANTES
+        addParticipante.addClickListener(clickEvent -> {
+            mostrarFormularioAddParticipante(e);
         });
         //TABLA CON TODOS LOS GASTOS DEL EVENTO
         Table tablaGastos = getTablaGastos(e);
@@ -139,6 +144,61 @@ class EventosLayout extends HorizontalSplitPanel {
      }
     
     /**
+     * Se muestra el formulario de añadir un nuevo evento.
+     */
+    private void mostrarFormularioAddEvento() {
+        TextField nombre = new TextField("Nombre");
+        nombre.setRequired(true);
+        TextField divisa = new TextField("Divisa");
+        divisa.setRequired(true);
+        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres", 1, 3, false));
+        final Button add = new Button("Crear evento");
+        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        FormLayout form = new FormLayout(nombre, divisa, add);
+        add.addClickListener(clickEvent -> {
+            try {
+                nombre.validate();
+                divisa.validate();
+                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario);
+                mostrarEventos();
+            } catch (Validator.InvalidValueException ex) {
+                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+            }
+        });
+        form.setMargin(true);
+        setSecondComponent(form);
+    }
+    
+    private void mostrarFormularioAddParticipante(Evento e) {
+        TextField nombre = new TextField("Nombre");
+        nombre.setRequired(true);
+        TextField divisa = new TextField("Divisa");
+        divisa.setRequired(true);
+        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres", 1, 3, false));
+        final Button add = new Button("Crear evento");
+        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        FormLayout form = new FormLayout(nombre, divisa, add);
+        add.addClickListener(clickEvent -> {
+            try {
+                nombre.validate();
+                divisa.validate();
+                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario);
+                mostrarEventos();
+            } catch (Validator.InvalidValueException ex) {
+                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+            }
+        });
+        form.setMargin(true);
+        setSecondComponent(form);
+    }
+    
+    /**
      * Muestra el formulario para añadir un gasto al evento en una ventana
      * emergente.
      *
@@ -146,10 +206,6 @@ class EventosLayout extends HorizontalSplitPanel {
      */
     private void mostrarFormularioAddGasto(Evento e) {
         //SE CREA LA VENTANA EMERGENTE
-        final Window subWindow = new Window("Añadir Pago");
-        VerticalLayout subContent = new VerticalLayout();
-        subContent.setMargin(true);
-        subWindow.setContent(subContent);
         TextField titulo = new TextField("Título");
         titulo.setRequired(true);
         TextField precio = new TextField("Precio");
@@ -177,10 +233,6 @@ class EventosLayout extends HorizontalSplitPanel {
                     precio.validate();
                     pagador.validate();
                     GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), e.getId(), ParticipanteDAO.read(pagador.getValue().toString()).getId(), deudores);
-                    titulo.setValue("");
-                    precio.setValue("");
-                    pagador.setValue("");
-                    subWindow.close(); // Close the sub-window
                     mostrarEvento(e);
                 } catch (Validator.InvalidValueException ex) {
                     Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
@@ -191,37 +243,6 @@ class EventosLayout extends HorizontalSplitPanel {
         });
         //AÑADIMOS LOS COMPONENTES
         form.addComponent(add);
-        subContent.addComponent(form);
-        subWindow.center();
-        UI.getCurrent().addWindow(subWindow);
-    }
-
-    /**
-     * Se muestra el formulario de añadir un nuevo evento.
-     */
-    private void mostrarFormularioAddEvento() {
-        TextField nombre = new TextField("Nombre");
-        nombre.setRequired(true);
-        TextField divisa = new TextField("Divisa");
-        divisa.setRequired(true);
-        divisa.addValidator(new StringLengthValidator("Máximo 3 caracteres", 1, 3, false));
-        final Button add = new Button("Crear evento");
-        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        FormLayout form = new FormLayout(nombre, divisa, add);
-        add.addClickListener(clickEvent -> {
-            try {
-                nombre.validate();
-                divisa.validate();
-                EventoDAO.create(nombre.getValue(), divisa.getValue(), usuario);
-                mostrarEventos();
-            } catch (Validator.InvalidValueException ex) {
-                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
-                n.setPosition(Position.TOP_CENTER);
-                n.show(Page.getCurrent());
-            }
-        });
-        form.setMargin(true);
         setSecondComponent(form);
     }
 
@@ -290,4 +311,66 @@ class EventosLayout extends HorizontalSplitPanel {
         return table;
     }
 
+    
+ //---------------------------------------------------------------------------------------------------------
+    /**
+     * Muestra el formulario para añadir un gasto al evento en una ventana
+     * emergente.
+     *
+     * @param idEvento ID del Evento al que se quiere añadir un gasto.
+     */
+    /*
+    private void mostrarFormularioAddGasto(Evento e) {
+        //SE CREA LA VENTANA EMERGENTE
+        final Window subWindow = new Window("Añadir Pago");
+        VerticalLayout subContent = new VerticalLayout();
+        subContent.setMargin(true);
+        subWindow.setContent(subContent);
+        TextField titulo = new TextField("Título");
+        titulo.setRequired(true);
+        TextField precio = new TextField("Precio");
+        precio.setRequired(true);
+        List<Participante> participantes = ParticipanteDAO.readAllFromEvento(e.getId());
+        ComboBox pagador = new ComboBox("Pagador");
+        FormLayout form = new FormLayout(titulo, precio, pagador);
+        List<Participante> deudores = new ArrayList<>();
+        for (Participante p : participantes) {
+            pagador.addItem(p.getNombre());
+            CheckBox c = new CheckBox(p.getNombre());
+            c.addValueChangeListener(evento ->{
+                deudores.add(p);
+            });
+            form.addComponent(c);
+        }
+        final Button add = new Button("Añadir Gasto");
+        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        //SI SE CLICA EN AÑADIR PAGO SE CREA EL PAGO A LA VEZ QUE SE CIERRA LA VENTANA
+        add.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                try {
+                    titulo.validate();
+                    precio.validate();
+                    pagador.validate();
+                    GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), e.getId(), ParticipanteDAO.read(pagador.getValue().toString()).getId(), deudores);
+                    titulo.setValue("");
+                    precio.setValue("");
+                    pagador.setValue("");
+                    subWindow.close(); // Close the sub-window
+                    mostrarEvento(e);
+                } catch (Validator.InvalidValueException ex) {
+                    Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                }
+            }
+        });
+        //AÑADIMOS LOS COMPONENTES
+        form.addComponent(add);
+        subContent.addComponent(form);
+        subWindow.center();
+        UI.getCurrent().addWindow(subWindow);
+    }
+    
+*/
 }
