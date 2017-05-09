@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
-import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
  *
@@ -49,8 +48,15 @@ public class ParticipanteDAO {
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
         String nombre = document.getString("nombre");
-        String idAmigoDe = document.getString("idAmigoDe");
+        ObjectId idAmigoDe = document.getObjectId("idAmigoDe");
         return new Participante(id, nombre, idAmigoDe);
+    }
+    
+    public static Participante read(String nombre){
+        BasicDBObject whereQuery = new BasicDBObject();
+        whereQuery.put("nombre", nombre);
+        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
+        return new Participante(document.getObjectId("_id"), nombre, document.getObjectId("idAmigoDe"));
     }
 
     public static List<Participante> readAllFromEvento(ObjectId idEvento) {
@@ -64,7 +70,7 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
@@ -82,7 +88,7 @@ public class ParticipanteDAO {
 
             while (it.hasNext()) {
                 BasicDBObject p = (BasicDBObject) it.next();
-                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+                participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
             }
         } catch (NullPointerException ex) {
         }
@@ -90,16 +96,16 @@ public class ParticipanteDAO {
         return participantes;
     }
 
-    public static List<Participante> readAllDeudoresFromPago(ObjectId idPago) {
+    public static List<Participante> readAllDeudoresFromPago(ObjectId idGasto) {
         BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("_id", idPago);
-        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Pago").findOne(whereQuery);
+        whereQuery.put("_id", idGasto);
+        BasicDBObject document = (BasicDBObject) dataBase.getCollection("Gasto").findOne(whereQuery);
         BasicDBList participantesDB = (BasicDBList) document.get("deudores");
         Iterator it = participantesDB.iterator();
         List<Participante> participantes = new ArrayList<>();
         while (it.hasNext()) {
             BasicDBObject p = (BasicDBObject) it.next();
-            participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getString("idAmigoDe")));
+            participantes.add(new Participante(p.getObjectId("_id"), p.getString("nombre"), p.getObjectId("idAmigoDe")));
         }
         return participantes;
     }

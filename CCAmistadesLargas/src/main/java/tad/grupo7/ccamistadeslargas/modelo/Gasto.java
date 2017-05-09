@@ -81,14 +81,10 @@ public class Gasto {
     }
 
     public Object[] getArray() {
-        return new Object[]{getNombre(),getPrecio(),ParticipanteDAO.read(getIdPagador()).getNombre()};
+        String deudores = "";
+        for(Participante p : getDeudores()){
+            deudores += p.getNombre() + " ";
+        }
+        return new Object[]{getNombre(),getPrecio(),ParticipanteDAO.read(getIdPagador()).getNombre(),deudores};
     }
-
-    
-
-    
-    
-
-    
-    
 }
