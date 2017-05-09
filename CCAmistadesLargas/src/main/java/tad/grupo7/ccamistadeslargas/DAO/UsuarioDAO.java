@@ -37,9 +37,6 @@ public class UsuarioDAO {
 
     public static void addAmigo(String nombre, ObjectId idAmigoDe) {
         BasicDBList amigos = null;
-        BasicDBObject amigo = new BasicDBObject();
-        amigo.append("nombre", nombre);
-        amigo.append("idAmigoDe", idAmigoDe);
         amigos = (BasicDBList) readDBObject(idAmigoDe).get("amigos");
         if(amigos==null){ //Si es la primera vez
             amigos = new BasicDBList();

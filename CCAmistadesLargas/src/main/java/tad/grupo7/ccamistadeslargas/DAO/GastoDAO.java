@@ -36,10 +36,7 @@ public class GastoDAO {
         document.append("idPagador", idPagador);
         BasicDBList deudoresDB = new BasicDBList();
         for (Participante p : deudores) {
-            BasicDBObject d = new BasicDBObject();
-            d.append("nombre", p.getNombre());
-            d.append("idAmigoDe", p.getIdAmigoDe());
-            deudoresDB.add(d);
+            deudoresDB.add(ParticipanteDAO.readDBObject(p.getNombre(), p.getIdAmigoDe()));
         }
         document.append("deudores", deudoresDB);
         gastos.insert(document);
