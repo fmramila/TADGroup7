@@ -53,9 +53,11 @@ public class UsuarioDAO {
 
     public static void update(ObjectId id, String nombre, String password, String email) {
         BasicDBObject newUsuario = new BasicDBObject();
-        newUsuario.append("$set", new BasicDBObject().append("nombre", nombre));
-        newUsuario.append("$set", new BasicDBObject().append("password", password));
-        newUsuario.append("$set", new BasicDBObject().append("email", email));
+        BasicDBObject atributos = new BasicDBObject();
+        atributos.append("nombre", nombre);
+        atributos.append("password", password);
+        atributos.append("email", email);
+        newUsuario.append("$set", atributos);
         BasicDBObject oldUsuario = new BasicDBObject().append("_id", id);
         usuarios.update(oldUsuario, newUsuario);
     }
