@@ -10,6 +10,7 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable;
 import static com.vaadin.server.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
@@ -121,6 +122,7 @@ class EventosLayout extends HorizontalSplitPanel {
             for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
                 vl.addComponent(getTablaResumenGastosPorPersona(e,p));
             }
+            setSplitPosition(100, Sizeable.UNITS_PERCENTAGE);
             setFirstComponent(vl);
         });
         //TABLA CON TODOS LOS GASTOS DEL EVENTO
@@ -369,8 +371,8 @@ class EventosLayout extends HorizontalSplitPanel {
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("debePoner", String.class, null);
         table.addContainerProperty("debeRecibir", String.class, null);
-        table.addContainerProperty("Número de gastos pagados", Integer.class, null);
-        table.addContainerProperty("Número de gastos recibidos", Integer.class, null);
+        table.addContainerProperty("Gastos pagados", Integer.class, null);
+        table.addContainerProperty("Gastos", Integer.class, null);
         for (ResumenPlusvalia p : resumenPlusvalia) {
             table.addItem(p.getArray(), null);
         }
@@ -382,7 +384,6 @@ class EventosLayout extends HorizontalSplitPanel {
     private Table getTablaResumenGastosPorPersona(Evento e, Participante p) {
         List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e,p);
         Table table = new Table("Resumen Gastos "+p.getNombre());
-        table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Ha pagado", String.class, null);
         table.addContainerProperty("Ha gastado", String.class, null);
         for (ResumenPagoPorPersona rppp : resumenGastosPorPersona) {
