@@ -25,7 +25,7 @@ public class IndexView extends SideMenu implements View{
             removeAllComponents();
             addComponent(new EventosLayout());
         });
-        addMenuItem("Usuarios", () -> {
+        addMenuItem("Amigos", () -> {
             removeAllComponents();
             addComponent(new AmigosLayout());
         });

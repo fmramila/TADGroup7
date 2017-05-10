@@ -18,6 +18,7 @@ import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
+import tad.grupo7.ccamistadeslargas.modelo.ResumenPagoPorPersona;
 import tad.grupo7.ccamistadeslargas.modelo.ResumenPlusvalia;
 import tad.grupo7.ccamistadeslargas.modelo.Tupla;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
@@ -33,9 +34,10 @@ public class EventoDAO {
 
     /**
      * Crea un evento en la BD.
+     *
      * @param nombre String nombre del evento.
      * @param divisa String divisa.
-     * @param creador Usuario creador. 
+     * @param creador Usuario creador.
      */
     public static void create(String nombre, String divisa, Usuario creador) {
         BasicDBObject document = new BasicDBObject();
@@ -49,8 +51,9 @@ public class EventoDAO {
 
     /**
      * Añade un participante al evento
+     *
      * @param idEvento ObjectId del evento.
-     * @param idParticipante  ObjectId del participante.
+     * @param idParticipante ObjectId del participante.
      */
     public static void addParticipante(ObjectId idEvento, ObjectId idParticipante) {
         BasicDBList participantes = null;
@@ -68,6 +71,7 @@ public class EventoDAO {
 
     /**
      * Devuelve un Evento que coincida con un ID.
+     *
      * @param id ObjectId del evento.
      * @return Evento
      */
@@ -84,6 +88,7 @@ public class EventoDAO {
 
     /**
      * Actualiza un evento en la BD.
+     *
      * @param id ObjectId del evento a actualizar.
      * @param nombre String nuevo nombre del evento.
      * @param divisa String nueva divisa del evento.
@@ -100,6 +105,7 @@ public class EventoDAO {
 
     /**
      * Devuelve un listado con todos los eventos del usuario.
+     *
      * @param idUsuario ObjectId del usuario.
      * @return List<Evento>
      */
@@ -117,6 +123,7 @@ public class EventoDAO {
 
     /**
      * Elimina de la BD un evento.
+     *
      * @param id ObjectId del evento a eliminar.
      */
     public static void delete(ObjectId id) {
@@ -125,6 +132,7 @@ public class EventoDAO {
 
     /**
      * Devuelve un BasicDBObject de la BD.
+     *
      * @param id ObjectId del evento a devolver.
      * @return BasicDBObject
      */
@@ -136,6 +144,7 @@ public class EventoDAO {
 
     /**
      * Devuelve un BasicDBObject de la BD.
+     *
      * @param nombre String nombre del evento.
      * @param idCreador ObjectId del creador del evento.
      * @return BasicDBObject
@@ -147,6 +156,15 @@ public class EventoDAO {
         obj.add(new BasicDBObject("idCreador", idCreador));
         andQuery.put("$and", obj);
         return (BasicDBObject) eventos.findOne(andQuery);
+    }
+
+    private static Boolean esDeudor(String nombre, List<Participante> deudores) {
+        for (Participante d : deudores) {
+            if (nombre.equals(d.getNombre())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static List<ResumenPlusvalia> getResumenPlusvalia(Evento e) {
@@ -176,6 +194,8 @@ public class EventoDAO {
             } else if (plusvalia < 0) {
                 negativo.add(new Tupla(plusvalia, p.getNombre()));
             }
+
+            resumen.add(new ResumenPlusvalia(p.getNombre(), "", "", hePagado, heParticipado));
             plusvalia = 0.0;
             hePagado = 0;
             heParticipado = 0;
@@ -183,10 +203,11 @@ public class EventoDAO {
         Iterator<Tupla> itPos = positivo.iterator();
         Iterator<Tupla> itNeg = negativo.iterator();
 
-        Boolean firstTime = true;
         Tupla pos = null;
         Tupla neg = null;
         int flag = 0; //0: aumentar los dos, 1: aumentar Pos, 2: aumentar Neg
+        int posicion;
+        ResumenPlusvalia persona;
         while (itPos.hasNext() || itNeg.hasNext()) {
             switch (flag) {
                 case 0:
@@ -201,17 +222,48 @@ public class EventoDAO {
                     break;
             }
             if (pos.getX() > Math.abs(neg.getX())) {
-                resumen.add(new ResumenPlusvalia(neg.getY(), pos.getY() + " " + neg.getX() + " " + e.getDivisa(), "---", hePagado, heParticipado));
+                posicion = estaIncluida(pos.getY(), resumen);
+
+                persona = resumen.get(posicion);
+                persona.setDebeRecibir(persona.getDebeRecibir() + " " + neg.getY() + " " + Math.abs(neg.getX()) + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
+                posicion = estaIncluida(neg.getY(), resumen);
+
+                persona = resumen.get(posicion);
+                persona.setDebePoner(persona.getDebePoner() + " " + pos.getY() + " " + Math.abs(neg.getX()) + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
                 flag = 2;
-                 pos.setX(pos.getX() + neg.getX());
+                pos.setX(pos.getX() + neg.getX());
             } else if (pos.getX() == Math.abs(neg.getX())) {
-                resumen.add(new ResumenPlusvalia(neg.getY(), pos.getY() + " " + neg.getX() + " " + e.getDivisa(), "---", hePagado, heParticipado));
-                resumen.add(new ResumenPlusvalia(pos.getY(), "---", neg.getY() + " " + pos.getX() + " " + e.getDivisa(), hePagado, heParticipado));
+                posicion = estaIncluida(pos.getY(), resumen);
+
+                persona = resumen.get(posicion);
+                persona.setDebeRecibir(persona.getDebeRecibir() + " " + neg.getY() + " " + pos.getX() + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
+                posicion = estaIncluida(neg.getY(), resumen);
+
+                persona = resumen.get(posicion);
+                persona.setDebePoner(persona.getDebePoner() + " " + pos.getY() + " " + pos.getX() + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
                 flag = 0;
                 pos.setX(pos.getX() + neg.getX());
                 neg.setX(pos.getX() + neg.getX());
             } else {
-                resumen.add(new ResumenPlusvalia(pos.getY(), "---", neg.getY() + " " + pos.getX() + " " + e.getDivisa(), hePagado, heParticipado));
+                posicion = estaIncluida(pos.getY(), resumen);
+
+                persona = resumen.get(posicion);
+                persona.setDebeRecibir(persona.getDebeRecibir() + " " + neg.getY() + " " + pos.getX() + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
+                posicion = estaIncluida(neg.getY(), resumen);
+                persona = resumen.get(posicion);
+                persona.setDebePoner(persona.getDebePoner() + " " + pos.getY() + " " + pos.getX() + " " + e.getDivisa());
+                resumen.set(posicion, persona);
+
                 flag = 1;
                 neg.setX(pos.getX() + neg.getX());
             }
@@ -220,12 +272,23 @@ public class EventoDAO {
         return resumen;
     }
 
-    private static Boolean esDeudor(String nombre, List<Participante> deudores) {
-        for (Participante d : deudores) {
-            if (nombre.equals(d.getNombre())) {
-                return true;
+    private static int estaIncluida(String nombre, List<ResumenPlusvalia> resumen) {
+        Iterator<ResumenPlusvalia> it = resumen.iterator();
+        ResumenPlusvalia resu;
+        int i = 0;
+        while (it.hasNext()) {
+            resu = it.next();
+            if (resu.getNombreParticipante().equals(nombre)) {
+                return i;
             }
+            i++;
         }
-        return false;
+        return -1;
+    }
+
+    public static List<ResumenPagoPorPersona> getResumenGastosPorPersona(Evento e, Participante p) {
+        List<ResumenPagoPorPersona> resumen = new ArrayList<>();
+        //TODO
+        return resumen;
     }
 }

@@ -16,6 +16,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
@@ -30,6 +31,7 @@ import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
 import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
+import tad.grupo7.ccamistadeslargas.modelo.ResumenPagoPorPersona;
 import tad.grupo7.ccamistadeslargas.modelo.ResumenPlusvalia;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
@@ -76,10 +78,17 @@ class EventosLayout extends HorizontalSplitPanel {
         nombre.setValue(e.getNombre());
         TextField divisa = new TextField("Divisa");
         divisa.setValue(e.getDivisa());
+        HorizontalLayout layouth= new  HorizontalLayout();
+        HorizontalLayout layouth2= new  HorizontalLayout();
+        layouth.setSpacing(true);
+        layouth2.setSpacing(true);
+        
         final Button actualizar = new Button("Actualizar Evento");
         final Button eliminar = new Button("Eliminar Evento");
         final Button addPago = new Button("Añadir Pago");
         final Button addParticipante = new Button("Añadir Participante");
+        layouth.addComponents(actualizar,eliminar);
+        layouth2.addComponents(addPago,addParticipante);
         final Button hacerCuentas = new Button("Hacer las cuentas");
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
@@ -105,16 +114,21 @@ class EventosLayout extends HorizontalSplitPanel {
         });
         //BOTÓN PARA HACER LAS CUENTAS
         hacerCuentas.addClickListener(clickEvent -> {
-            Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
             removeAllComponents();
-            setFirstComponent(tablaResumenPlusvalia);
+            VerticalLayout vl = new VerticalLayout();
+            Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
+            vl.addComponent(tablaResumenPlusvalia);
+            for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
+                vl.addComponent(getTablaResumenGastosPorPersona(e,p));
+            }
+            setFirstComponent(vl);
         });
         //TABLA CON TODOS LOS GASTOS DEL EVENTO
         Table tablaGastos = getTablaGastos(e);
         //TABLA CON TODOS LOS PARTICIPANTES DEL EVENTO
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, divisa, actualizar, eliminar, addPago, addParticipante, hacerCuentas);
+        FormLayout form = new FormLayout(nombre, divisa, layouth,layouth2, hacerCuentas);
         VerticalLayout l = new VerticalLayout(form, tablaGastos, tablaParticipantes);
         l.setMargin(true);
         setFirstComponent(l);
@@ -365,6 +379,20 @@ class EventosLayout extends HorizontalSplitPanel {
         return table;
     }
     
+    private Table getTablaResumenGastosPorPersona(Evento e, Participante p) {
+        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e,p);
+        Table table = new Table("Resumen Gastos "+p.getNombre());
+        table.addContainerProperty("Nombre", String.class, null);
+        table.addContainerProperty("Ha pagado", String.class, null);
+        table.addContainerProperty("Ha gastado", String.class, null);
+        for (ResumenPagoPorPersona rppp : resumenGastosPorPersona) {
+            table.addItem(p.getArray(), null);
+        }
+        table.setPageLength(table.size());
+        table.setWidth(100, UNITS_PERCENTAGE);
+        return table;
+    }
+    
     //---------------------------------------------------------------------------------------------------------
     /*
     private void mostrarFormularioAddGasto(Evento e) {
@@ -390,4 +418,6 @@ class EventosLayout extends HorizontalSplitPanel {
     }
     
      */
+
+    
 }
