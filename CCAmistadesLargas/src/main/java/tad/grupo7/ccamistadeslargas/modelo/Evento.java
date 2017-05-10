@@ -14,10 +14,10 @@ public class Evento {
     private ObjectId id;
     private String nombre;
     private String divisa;
-    private String idCreador;
+    private ObjectId idCreador;
     private List<Participante> participantes;
 
-    public Evento(ObjectId id, String nombre, String divisa, String idCreador, List<Participante> participantes) {
+    public Evento(ObjectId id, String nombre, String divisa, ObjectId idCreador, List<Participante> participantes) {
         this.id = id;
         this.nombre = nombre;
         this.divisa = divisa;
@@ -50,11 +50,11 @@ public class Evento {
         this.divisa = divisa;
     }
 
-    public String getIdCreador() {
+    public ObjectId getIdCreador() {
         return idCreador;
     }
 
-    public void setIdCreador(String idCreador) {
+    public void setIdCreador(ObjectId idCreador) {
         this.idCreador = idCreador;
     }
 

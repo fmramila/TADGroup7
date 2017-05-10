@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.bson.types.ObjectId;
-import tad.grupo7.ccamistadeslargas.modelo.Deuda;
 import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
@@ -32,6 +31,12 @@ public class EventoDAO {
     private static DB dataBase = new MongoClient("localhost", 27017).getDB("CC");
     private static DBCollection eventos = dataBase.getCollection("Evento");
 
+    /**
+     * Crea un evento en la BD.
+     * @param nombre String nombre del evento.
+     * @param divisa String divisa.
+     * @param creador Usuario creador. 
+     */
     public static void create(String nombre, String divisa, Usuario creador) {
         BasicDBObject document = new BasicDBObject();
         document.append("nombre", nombre);
@@ -42,6 +47,11 @@ public class EventoDAO {
         addParticipante(readDBObject(nombre, creador.getId()).getObjectId("_id"), o);
     }
 
+    /**
+     * Añade un participante al evento
+     * @param idEvento ObjectId del evento.
+     * @param idParticipante  ObjectId del participante.
+     */
     public static void addParticipante(ObjectId idEvento, ObjectId idParticipante) {
         BasicDBList participantes = null;
         BasicDBObject participante = ParticipanteDAO.readDBObject(idParticipante);
@@ -56,17 +66,28 @@ public class EventoDAO {
         eventos.update(oldEvento, newEvento);
     }
 
+    /**
+     * Devuelve un Evento que coincida con un ID.
+     * @param id ObjectId del evento.
+     * @return Evento
+     */
     public static Evento read(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) eventos.findOne(whereQuery);
         String nombre = document.getString("nombre");
         String divisa = document.getString("divisa");
-        String idCreador = document.getString("idCreador");
+        ObjectId idCreador = document.getObjectId("idCreador");
         Evento e = new Evento(id, nombre, divisa, idCreador, ParticipanteDAO.readAllFromEvento(id));
         return e;
     }
 
+    /**
+     * Actualiza un evento en la BD.
+     * @param id ObjectId del evento a actualizar.
+     * @param nombre String nuevo nombre del evento.
+     * @param divisa String nueva divisa del evento.
+     */
     public static void update(ObjectId id, String nombre, String divisa) {
         BasicDBObject newEvento = new BasicDBObject();
         BasicDBObject atributos = new BasicDBObject();
@@ -77,6 +98,11 @@ public class EventoDAO {
         eventos.update(oldEvento, newEvento);
     }
 
+    /**
+     * Devuelve un listado con todos los eventos del usuario.
+     * @param idUsuario ObjectId del usuario.
+     * @return List<Evento>
+     */
     public static List<Evento> readAll(ObjectId idUsuario) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("idCreador", idUsuario);
@@ -84,21 +110,36 @@ public class EventoDAO {
         List<Evento> eventos = new ArrayList<>();
         while (cursor.hasNext()) {
             BasicDBObject e = (BasicDBObject) cursor.next();
-            eventos.add(new Evento(e.getObjectId("_id"), e.getString("nombre"), e.getString("divisa"), e.getString("idCreador"), ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
+            eventos.add(new Evento(e.getObjectId("_id"), e.getString("nombre"), e.getString("divisa"), e.getObjectId("idCreador"), ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
         }
         return eventos;
     }
 
+    /**
+     * Elimina de la BD un evento.
+     * @param id ObjectId del evento a eliminar.
+     */
     public static void delete(ObjectId id) {
         eventos.remove(new BasicDBObject().append("_id", id));
     }
 
+    /**
+     * Devuelve un BasicDBObject de la BD.
+     * @param id ObjectId del evento a devolver.
+     * @return BasicDBObject
+     */
     public static BasicDBObject readDBObject(ObjectId id) {
         BasicDBObject whereQuery = new BasicDBObject();
         whereQuery.put("_id", id);
         return (BasicDBObject) eventos.findOne(whereQuery);
     }
 
+    /**
+     * Devuelve un BasicDBObject de la BD.
+     * @param nombre String nombre del evento.
+     * @param idCreador ObjectId del creador del evento.
+     * @return BasicDBObject
+     */
     public static BasicDBObject readDBObject(String nombre, ObjectId idCreador) {
         BasicDBObject andQuery = new BasicDBObject();
         List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
@@ -186,42 +227,5 @@ public class EventoDAO {
             }
         }
         return false;
-    }
-
-    public static List<Deuda> getResumenDeudas(Evento e) {
-        List<Gasto> gastos = GastoDAO.readAll(e.getId());
-        List<Participante> participantes = ParticipanteDAO.readAllFromEvento(e.getId());
-        List<Deuda> resumen = new ArrayList<>();
-        for (Participante p : participantes) {
-            List<Tupla> acumuladores = getListAcumuladores(p, participantes);
-            for (Gasto g : gastos) {
-                if (g.getIdPagador().equals(p.getId())) { //pertenezco a los dos
-                    Double gasto = g.getPrecio() / g.getDeudores().size();
-                    for (Tupla t : acumuladores) {
-                        if (esDeudor(t.getY(), g.getDeudores())) {
-                            t.setX(t.getX() + gasto);
-                        }
-                    }
-                } else if ((!g.getIdPagador().equals(p.getId()) && esDeudor(p.getNombre(), g.getDeudores()))) { //no he pagado y participo
-                    Double gasto = g.getPrecio() / g.getDeudores().size();
-                    for (Tupla t : acumuladores) {
-                        if (t.getY().equals(ParticipanteDAO.read(g.getIdPagador()).getNombre())) { //si es el pagador 
-                            t.setX(t.getX() - gasto);
-                        }
-                    }
-                }
-            }
-        }
-        return resumen;
-    }
-
-    private static List<Tupla> getListAcumuladores(Participante p, List<Participante> participantes) {
-        List<Tupla> res = new ArrayList<>();
-        for (Participante pa : participantes) {
-            if (!p.equals(pa)) {
-                res.add(new Tupla(0.0, pa.getNombre()));
-            }
-        }
-        return res;
     }
 }
