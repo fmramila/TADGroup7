@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import tad.grupo7.ccamistadeslargas.DAO.EventoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.GastoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
-import tad.grupo7.ccamistadeslargas.modelo.Deuda;
 import tad.grupo7.ccamistadeslargas.modelo.Evento;
 import tad.grupo7.ccamistadeslargas.modelo.Gasto;
 import tad.grupo7.ccamistadeslargas.modelo.Participante;
@@ -121,8 +120,13 @@ class EventosLayout extends HorizontalSplitPanel {
         setFirstComponent(l);
     }
 
+    /**
+     * Se muestra un gasto para poder actualizarlo o eliminarlo.
+     *
+     * @param e Recoge el evento al que pertenece el gasto.
+     */
     private void mostrarGasto(Gasto g, Evento e) {
-        //FORMULARIO POR SI SE QUIERE EDITAR EL EVENTO
+        //FORMULARIO POR SI SE QUIERE EDITAR EL GASTO
         TextField nombre = new TextField("Titulo");
         nombre.setValue(g.getNombre());
         TextField precio = new TextField("Precio");
@@ -180,6 +184,11 @@ class EventosLayout extends HorizontalSplitPanel {
         setSecondComponent(form);
     }
 
+    /**
+     * Se muestra el formulario para añadir un participante al evento.
+     *
+     * @param e Recoge el evento.
+     */
     private void mostrarFormularioAddParticipante(Evento e) {
         List<Participante> participantes = ParticipanteDAO.readAllFromUsuario(usuario.getId());
         ComboBox nuevoParticipante = new ComboBox("Participante Nuevo");
@@ -209,10 +218,9 @@ class EventosLayout extends HorizontalSplitPanel {
     }
 
     /**
-     * Muestra el formulario para añadir un gasto al evento en una ventana
-     * emergente.
+     * Muestra el formulario para añadir un gasto al evento.
      *
-     * @param idEvento ID del Evento al que se quiere añadir un gasto.
+     * @param e Evento al que añadir el gasto.
      */
     private void mostrarFormularioAddGasto(Evento e) {
         //SE CREA LA VENTANA EMERGENTE
@@ -256,6 +264,10 @@ class EventosLayout extends HorizontalSplitPanel {
         setSecondComponent(form);
     }
 
+    /**
+     * Obtiene la tabla de los eventos creados por el usuario.
+     * @return Table
+     */
     private Table getTablaEventos() {
         List<Evento> eventos = EventoDAO.readAll(usuario.getId());
         Table table = new Table("");
@@ -282,6 +294,11 @@ class EventosLayout extends HorizontalSplitPanel {
         return table;
     }
 
+    /**
+     * Obtiene la tabla de los gastos de un evento.
+     * @param e Evento
+     * @return Table
+     */
     private Table getTablaGastos(Evento e) {
         List<Gasto> gastos = GastoDAO.readAll(e.getId());
         Table table = new Table("Gastos");
@@ -310,6 +327,11 @@ class EventosLayout extends HorizontalSplitPanel {
         return table;
     }
 
+    /**
+     * Obtiene la tabla de los participantes de un evento.
+     * @param e Evento
+     * @return Table
+     */
     private Table getTablaParticipantes(Evento e) {
         List<Participante> participantes = ParticipanteDAO.readAllFromEvento(e.getId());
         Table table = new Table("Participantes");
@@ -322,6 +344,11 @@ class EventosLayout extends HorizontalSplitPanel {
         return table;
     }
 
+    /**
+     * Obtiene la tabla resumen del reajuste de cuentas tras terminar el evento.
+     * @param e Evento
+     * @return Table
+     */
     private Table getTablaResumenPlusvalia(Evento e) {
         List<ResumenPlusvalia> resumenPlusvalia = EventoDAO.getResumenPlusvalia(e);
         Table table = new Table("Resumen Plusvalías");
@@ -346,45 +373,15 @@ class EventosLayout extends HorizontalSplitPanel {
         VerticalLayout subContent = new VerticalLayout();
         subContent.setMargin(true);
         subWindow.setContent(subContent);
-        TextField titulo = new TextField("Título");
-        titulo.setRequired(true);
-        TextField precio = new TextField("Precio");
-        precio.setRequired(true);
-        List<Participante> participantes = ParticipanteDAO.readAllFromEvento(e.getId());
-        ComboBox pagador = new ComboBox("Pagador");
         FormLayout form = new FormLayout(titulo, precio, pagador);
-        List<Participante> deudores = new ArrayList<>();
-        for (Participante p : participantes) {
-            pagador.addItem(p.getNombre());
-            CheckBox c = new CheckBox(p.getNombre());
-            c.addValueChangeListener(evento ->{
-                deudores.add(p);
-            });
-            form.addComponent(c);
-        }
-        final Button add = new Button("Añadir Gasto");
-        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        
         //SI SE CLICA EN AÑADIR PAGO SE CREA EL PAGO A LA VEZ QUE SE CIERRA LA VENTANA
         add.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                try {
-                    titulo.validate();
-                    precio.validate();
-                    pagador.validate();
-                    GastoDAO.create(titulo.getValue(), Double.valueOf(precio.getValue()), e.getId(), ParticipanteDAO.read(pagador.getValue().toString()).getId(), deudores);
-                    titulo.setValue("");
-                    precio.setValue("");
-                    pagador.setValue("");
                     subWindow.close(); // Close the sub-window
                     mostrarEvento(e);
-                } catch (Validator.InvalidValueException ex) {
-                    Notification n = new Notification("Rellena todos los campos", Notification.Type.WARNING_MESSAGE);
-                    n.setPosition(Position.TOP_CENTER);
-                    n.show(Page.getCurrent());
-                }
-            }
-        });
+                
         //AÑADIMOS LOS COMPONENTES
         form.addComponent(add);
         subContent.addComponent(form);
