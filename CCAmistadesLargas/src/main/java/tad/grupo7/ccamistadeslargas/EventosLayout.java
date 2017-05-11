@@ -79,17 +79,17 @@ class EventosLayout extends HorizontalSplitPanel {
         nombre.setValue(e.getNombre());
         TextField divisa = new TextField("Divisa");
         divisa.setValue(e.getDivisa());
-        HorizontalLayout layouth= new  HorizontalLayout();
-        HorizontalLayout layouth2= new  HorizontalLayout();
+        HorizontalLayout layouth = new HorizontalLayout();
+        HorizontalLayout layouth2 = new HorizontalLayout();
         layouth.setSpacing(true);
         layouth2.setSpacing(true);
-        
+
         final Button actualizar = new Button("Actualizar Evento");
         final Button eliminar = new Button("Eliminar Evento");
         final Button addPago = new Button("Añadir Pago");
         final Button addParticipante = new Button("Añadir Participante");
-        layouth.addComponents(actualizar,eliminar);
-        layouth2.addComponents(addPago,addParticipante);
+        layouth.addComponents(actualizar, eliminar);
+        layouth2.addComponents(addPago, addParticipante);
         final Button hacerCuentas = new Button("Hacer las cuentas");
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
@@ -119,8 +119,8 @@ class EventosLayout extends HorizontalSplitPanel {
             VerticalLayout vl = new VerticalLayout();
             Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
             vl.addComponent(tablaResumenPlusvalia);
-            for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
-                vl.addComponent(getTablaResumenGastosPorPersona(e,p));
+            for (Participante p : ParticipanteDAO.readAllFromEvento(e.getId())) {
+                vl.addComponent(getTablaResumenGastosPorPersona(e, p));
             }
             setSplitPosition(100, Sizeable.UNITS_PERCENTAGE);
             setFirstComponent(vl);
@@ -130,7 +130,7 @@ class EventosLayout extends HorizontalSplitPanel {
         //TABLA CON TODOS LOS PARTICIPANTES DEL EVENTO
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, divisa, layouth,layouth2, hacerCuentas);
+        FormLayout form = new FormLayout(nombre, divisa, layouth, layouth2, hacerCuentas);
         VerticalLayout l = new VerticalLayout(form, tablaGastos, tablaParticipantes);
         l.setMargin(true);
         setFirstComponent(l);
@@ -208,6 +208,7 @@ class EventosLayout extends HorizontalSplitPanel {
     private void mostrarFormularioAddParticipante(Evento e) {
         List<Participante> participantes = ParticipanteDAO.readAllFromUsuario(usuario.getId());
         ComboBox nuevoParticipante = new ComboBox("Participante Nuevo");
+        nuevoParticipante.setRequired(true);
         for (Participante p : participantes) {
             nuevoParticipante.addItem(p.getNombre());
         }
@@ -216,12 +217,21 @@ class EventosLayout extends HorizontalSplitPanel {
         add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         add.addClickListener(clickEvent -> {
             try {
-                EventoDAO.addParticipante(e.getId(), ParticipanteDAO.read(nuevoParticipante.getValue().toString()).getId());
-                Notification n = new Notification("Participante añadido", Notification.Type.ASSISTIVE_NOTIFICATION);
-                n.setPosition(Position.TOP_CENTER);
-                n.show(Page.getCurrent());
-                setSecondComponent(null);
-                mostrarEvento(e);
+                nuevoParticipante.validate();
+                Participante p = ParticipanteDAO.read(nuevoParticipante.getValue().toString());
+                if (!EventoDAO.esParticipante(e,p)) {
+                    EventoDAO.addParticipante(e.getId(), p.getId());
+                    Notification n = new Notification("Participante añadido", Notification.Type.ASSISTIVE_NOTIFICATION);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                    setSecondComponent(null);
+                    mostrarEvento(e);
+                } else {
+                    Notification n = new Notification("El participante ya se encuentra en el evento", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                }
+
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
                 n.setPosition(Position.TOP_CENTER);
@@ -282,6 +292,7 @@ class EventosLayout extends HorizontalSplitPanel {
 
     /**
      * Obtiene la tabla de los eventos creados por el usuario.
+     *
      * @return Table
      */
     private Table getTablaEventos() {
@@ -312,6 +323,7 @@ class EventosLayout extends HorizontalSplitPanel {
 
     /**
      * Obtiene la tabla de los gastos de un evento.
+     *
      * @param e Evento
      * @return Table
      */
@@ -345,6 +357,7 @@ class EventosLayout extends HorizontalSplitPanel {
 
     /**
      * Obtiene la tabla de los participantes de un evento.
+     *
      * @param e Evento
      * @return Table
      */
@@ -362,6 +375,7 @@ class EventosLayout extends HorizontalSplitPanel {
 
     /**
      * Obtiene la tabla resumen del reajuste de cuentas tras terminar el evento.
+     *
      * @param e Evento
      * @return Table
      */
@@ -380,10 +394,10 @@ class EventosLayout extends HorizontalSplitPanel {
         table.setWidth(100, UNITS_PERCENTAGE);
         return table;
     }
-    
+
     private Table getTablaResumenGastosPorPersona(Evento e, Participante p) {
-        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e,p);
-        Table table = new Table("Resumen Gastos "+p.getNombre());
+        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e, p);
+        Table table = new Table("Resumen Gastos " + p.getNombre());
         table.addContainerProperty("Ha pagado", String.class, null);
         table.addContainerProperty("Ha gastado", String.class, null);
         for (ResumenPagoPorPersona rppp : resumenGastosPorPersona) {
@@ -393,7 +407,7 @@ class EventosLayout extends HorizontalSplitPanel {
         table.setWidth(100, UNITS_PERCENTAGE);
         return table;
     }
-    
+
     //---------------------------------------------------------------------------------------------------------
     /*
     private void mostrarFormularioAddGasto(Evento e) {
@@ -419,6 +433,4 @@ class EventosLayout extends HorizontalSplitPanel {
     }
     
      */
-
-    
 }

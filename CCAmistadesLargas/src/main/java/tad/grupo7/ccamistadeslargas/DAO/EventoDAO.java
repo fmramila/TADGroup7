@@ -291,4 +291,14 @@ public class EventoDAO {
         //TODO
         return resumen;
     }
+
+    public static boolean esParticipante(Evento evento, Participante participante) {
+        for(Participante p : evento.getParticipantes()){
+            if(p.getNombre().equals(participante.getNombre())){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
