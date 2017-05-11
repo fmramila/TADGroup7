@@ -191,9 +191,9 @@ public class EventoDAO {
             }
             if (plusvalia > 0) {
                 
-                positivo.add(new Tupla(Math.floor(plusvalia * 100) / 100-0.01, p.getNombre()));
+                positivo.add(new Tupla(Math.floor(plusvalia * 100) / 100, p.getNombre()));
             } else if (plusvalia < 0) {
-                negativo.add(new Tupla(Math.floor(plusvalia * 100) / 100+0.01, p.getNombre()));
+                negativo.add(new Tupla(Math.floor(plusvalia * 100) / 100, p.getNombre()));
             }
 
             resumen.add(new ResumenPlusvalia(p.getNombre(), "", "", hePagado, heParticipado));

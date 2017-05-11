@@ -77,6 +77,7 @@ class EventosLayout extends HorizontalSplitPanel {
         TextField nombre = new TextField("Nombre");
         nombre.setValue(e.getNombre());
         ComboBox divisa = new ComboBox("Divisa");
+        divisa.setValue(e.getDivisa());
         divisa.setRequired(true);
         divisa.addItem("€");
         divisa.addItem("$");
@@ -127,7 +128,7 @@ class EventosLayout extends HorizontalSplitPanel {
             VerticalLayout vl = new VerticalLayout();
             Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
             HorizontalLayout hl1= new HorizontalLayout(tablaResumenPlusvalia);
-            hl1.setMarginargin(true);
+            hl1.setMargin(true);
             hl1.setSpacing(true);
             vl.addComponent(hl1);
             for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
@@ -135,7 +136,6 @@ class EventosLayout extends HorizontalSplitPanel {
                 hl.setMargin(true);
                 hl.setSpacing(true);
                 vl.addComponent(hl);
->>>>>>> origin/ferRama
             }
             setSplitPosition(100, Sizeable.UNITS_PERCENTAGE);
             setFirstComponent(vl);
