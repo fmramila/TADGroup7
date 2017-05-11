@@ -10,32 +10,32 @@ package tad.grupo7.ccamistadeslargas.modelo;
  * @author cayetano
  */
 public class ResumenPagoPorPersona {
-    private String debePagar;
-    private String debePoner;
+    private String haPagado;
+    private String haGastado;
     
-    public ResumenPagoPorPersona(String debePagar, String debePoner) {
-        this.debePagar = debePagar;
-        this.debePoner = debePoner;
+    public ResumenPagoPorPersona(String haPagado, String haGastado) {
+        this.haPagado = haPagado;
+        this.haGastado = haGastado;
     }
 
-    public String getDebePagar() {
-        return debePagar;
+    public String getHaPagado() {
+        return haPagado;
     }
 
-    public void setDebePagar(String debePagar) {
-        this.debePagar = debePagar;
+    public void setHaPagado(String haPagado) {
+        this.haPagado = haPagado;
     }
 
-    public String getDebePoner() {
-        return debePoner;
+    public String getHaGastado() {
+        return haGastado;
     }
 
-    public void setDebePoner(String debePoner) {
-        this.debePoner = debePoner;
+    public void setHaGastado(String haGastado) {
+        this.haGastado = haGastado;
     }
     
     public String[] getArray(){
-        return new String[]{getDebePagar(),getDebePoner()};
+        return new String[]{getHaPagado(),getHaGastado()};
     }
 
 }

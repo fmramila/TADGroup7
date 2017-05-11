@@ -126,9 +126,16 @@ class EventosLayout extends HorizontalSplitPanel {
             removeAllComponents();
             VerticalLayout vl = new VerticalLayout();
             Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
-            vl.addComponent(tablaResumenPlusvalia);
-            for (Participante p : ParticipanteDAO.readAllFromEvento(e.getId())) {
-                vl.addComponent(getTablaResumenGastosPorPersona(e, p));
+            HorizontalLayout hl1= new HorizontalLayout(tablaResumenPlusvalia);
+            hl1.setMarginargin(true);
+            hl1.setSpacing(true);
+            vl.addComponent(hl1);
+            for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
+                HorizontalLayout hl= new HorizontalLayout(getTablaResumenGastosPorPersona(e,p));
+                hl.setMargin(true);
+                hl.setSpacing(true);
+                vl.addComponent(hl);
+>>>>>>> origin/ferRama
             }
             setSplitPosition(100, Sizeable.UNITS_PERCENTAGE);
             setFirstComponent(vl);
@@ -397,7 +404,7 @@ class EventosLayout extends HorizontalSplitPanel {
      */
     private Table getTablaResumenPlusvalia(Evento e) {
         List<ResumenPlusvalia> resumenPlusvalia = EventoDAO.getResumenPlusvalia(e);
-        Table table = new Table("Resumen Plusvalías");
+        Table table = new Table("Resumen Cuentas");
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("debePoner", String.class, null);
         table.addContainerProperty("debeRecibir", String.class, null);
@@ -412,15 +419,17 @@ class EventosLayout extends HorizontalSplitPanel {
     }
 
     private Table getTablaResumenGastosPorPersona(Evento e, Participante p) {
-        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e, p);
-        Table table = new Table("Resumen Gastos " + p.getNombre());
+        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e,p);
+        Table table = new Table("Resumen Gastos: "+p.getNombre());
         table.addContainerProperty("Ha pagado", String.class, null);
         table.addContainerProperty("Ha gastado", String.class, null);
         for (ResumenPagoPorPersona rppp : resumenGastosPorPersona) {
-            table.addItem(p.getArray(), null);
+            table.addItem(rppp.getArray(), null);
         }
         table.setPageLength(table.size());
         table.setWidth(100, UNITS_PERCENTAGE);
+        table.setColumnWidth("Ha pagado", 500);
+        table.setColumnWidth("Ha gastado", 500);
         return table;
     }
 
