@@ -27,7 +27,7 @@ public class NavigatorUI extends UI {
         navigator = new Navigator(this, this);
 
         // Create and register the views
-        navigator.addView("", new LoginView());
+        navigator.addView("", new ejemploDragDrop());
         navigator.addView("index", new IndexView());
         navigator.addView("registrar", new RegistrarView());
     }
