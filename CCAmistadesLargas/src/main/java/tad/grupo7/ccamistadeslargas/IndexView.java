@@ -10,9 +10,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
-import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import java.io.File;
 import org.vaadin.teemusa.sidemenu.SideMenu;
@@ -33,6 +31,10 @@ public class IndexView extends SideMenu implements View {
         image.setSizeFull();
         image.setHeight("100%");
         addComponent(image);
+        addMenuItem("Perfil", () -> {
+            removeAllComponents();
+            addComponent(new PerfilLayout());
+        });
         addMenuItem("Eventos", () -> {
             removeAllComponents();
             addComponent(new EventosLayout());
