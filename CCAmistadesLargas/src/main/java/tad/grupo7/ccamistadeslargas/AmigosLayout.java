@@ -32,7 +32,7 @@ import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 class AmigosLayout extends HorizontalSplitPanel {
 
     private final Usuario usuario;
-    
+
     public AmigosLayout() {
         usuario = (Usuario) Session.getAttribute("usuario");
         mostrarAmistades();
@@ -52,23 +52,30 @@ class AmigosLayout extends HorizontalSplitPanel {
         col1.setMargin(true);
         setFirstComponent(col1);
     }
-    
+
     private void mostrarParticipante(Participante p) {
-                //FORMULARIO POR SI SE QUIERE EDITAR EL PARTICIPANTE
+        //FORMULARIO POR SI SE QUIERE EDITAR EL PARTICIPANTE
         TextField nombre = new TextField("Nombre");
         nombre.setValue(p.getNombre());
         final Button eliminar = new Button("Eliminar Participante");
         final Button actualizar = new Button("Actualizar Participante");
-        
+
         //BOTÓN PARA ACTUALIZAR EL PARTICIPANTE
         actualizar.addClickListener(clickEvent -> {
-            ParticipanteDAO.update(p.getId(),nombre.getValue());
-            UsuarioDAO.updateAmigo(nombre.getValue(), p.getId(),usuario.getId());
-            Notification n = new Notification("Participante actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
-            n.setPosition(Position.TOP_CENTER);
-            n.show(Page.getCurrent());
-            removeAllComponents();
-            mostrarAmistades();
+            if (ParticipanteDAO.read(nombre.getValue(), usuario.getId()) == null) {
+                ParticipanteDAO.update(p.getId(), nombre.getValue());
+                UsuarioDAO.updateAmigo(nombre.getValue(), p.getId(), usuario.getId());
+                Notification n = new Notification("Amigo actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+                removeAllComponents();
+                mostrarAmistades();
+            } else {
+                Notification n = new Notification("Ya existe un amigo con el mismo nombre", Notification.Type.WARNING_MESSAGE);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+            }
+
         });
         //BOTÓN PARA ELIMINAR EL PARTICIPANTE
         eliminar.addClickListener(clickEvent -> {
@@ -77,9 +84,9 @@ class AmigosLayout extends HorizontalSplitPanel {
             removeAllComponents();
             mostrarAmistades();
         });
-        
+
         //AÑADIMOS LOS COMPONENTES
-        FormLayout form = new FormLayout(nombre, actualizar,eliminar);
+        FormLayout form = new FormLayout(nombre, actualizar, eliminar);
         VerticalLayout l = new VerticalLayout(form);
         l.setMargin(true);
         setSecondComponent(l);
@@ -89,12 +96,12 @@ class AmigosLayout extends HorizontalSplitPanel {
         List<Participante> participantes = ParticipanteDAO.readAllFromUsuario(usuario.getId());
         Table table = new Table("");
         table.addContainerProperty("Nombre", String.class, null);
-        Iterator<Participante> it=  participantes.iterator();
+        Iterator<Participante> it = participantes.iterator();
         it.next();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             table.addItem(it.next().getArray(), null);
         }
-        
+
         table.setPageLength(table.size());
         table.setWidth(100, UNITS_PERCENTAGE);
         table.setSelectable(true);
@@ -104,30 +111,35 @@ class AmigosLayout extends HorizontalSplitPanel {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 try {
-                    Participante p = participantes.get(((int) table.getValue()) );
+                    Participante p = participantes.get(((int) table.getValue()));
                     mostrarParticipante(p);
                 } catch (Exception e) {
                 }
             }
 
-            
         });
         return table;
     }
 
     private void mostrarFormularioAddAmistad() {
-         TextField nombre = new TextField("Nombre");
+        TextField nombre = new TextField("Nombre");
         nombre.setRequired(true);
-        
+
         final Button add = new Button("Crear Participante");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         FormLayout form = new FormLayout(nombre, add);
         add.addClickListener(clickEvent -> {
             try {
                 nombre.validate();
-                ParticipanteDAO.create(nombre.getValue(),usuario.getId());
-                UsuarioDAO.addAmigo(nombre.getValue(), usuario.getId());
-                mostrarAmistades();
+                if (ParticipanteDAO.read(nombre.getValue(), usuario.getId()) == null) {
+                    ParticipanteDAO.create(nombre.getValue(), usuario.getId());
+                    UsuarioDAO.addAmigo(nombre.getValue(), usuario.getId());
+                    mostrarAmistades();
+                } else {
+                    Notification n = new Notification("Ya existe un amigo con el mismo nombre", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                }
             } catch (Validator.InvalidValueException ex) {
                 Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
                 n.setPosition(Position.TOP_CENTER);
@@ -137,5 +149,5 @@ class AmigosLayout extends HorizontalSplitPanel {
         form.setMargin(true);
         setSecondComponent(form);
     }
-    
+
 }
