@@ -190,9 +190,10 @@ public class EventoDAO {
                 }
             }
             if (plusvalia > 0) {
-                positivo.add(new Tupla(plusvalia, p.getNombre()));
+                
+                positivo.add(new Tupla(Math.floor(plusvalia * 100) / 100-0.01, p.getNombre()));
             } else if (plusvalia < 0) {
-                negativo.add(new Tupla(plusvalia, p.getNombre()));
+                negativo.add(new Tupla(Math.floor(plusvalia * 100) / 100+0.01, p.getNombre()));
             }
 
             resumen.add(new ResumenPlusvalia(p.getNombre(), "", "", hePagado, heParticipado));
@@ -235,7 +236,7 @@ public class EventoDAO {
                 resumen.set(posicion, persona);
 
                 flag = 2;
-                pos.setX(pos.getX() + neg.getX());
+                pos.setX(Math.floor((pos.getX() + neg.getX()) * 100) / 100);
             } else if (pos.getX() == Math.abs(neg.getX())) {
                 posicion = estaIncluida(pos.getY(), resumen);
 
@@ -250,8 +251,8 @@ public class EventoDAO {
                 resumen.set(posicion, persona);
 
                 flag = 0;
-                pos.setX(pos.getX() + neg.getX());
-                neg.setX(pos.getX() + neg.getX());
+                pos.setX(Math.floor((pos.getX() + neg.getX()) * 100) / 100);
+                neg.setX(Math.floor((pos.getX() + neg.getX()) * 100) / 100);
             } else {
                 posicion = estaIncluida(pos.getY(), resumen);
 
@@ -265,7 +266,7 @@ public class EventoDAO {
                 resumen.set(posicion, persona);
 
                 flag = 1;
-                neg.setX(pos.getX() + neg.getX());
+                neg.setX(Math.floor((pos.getX() + neg.getX()) * 100) / 100);
             }
         }
 
@@ -288,7 +289,38 @@ public class EventoDAO {
 
     public static List<ResumenPagoPorPersona> getResumenGastosPorPersona(Evento e, Participante p) {
         List<ResumenPagoPorPersona> resumen = new ArrayList<>();
-        //TODO
+        List<String> haPagado=new ArrayList<>();
+        List<String> haGastado=new ArrayList<>();
+        Gasto g;
+        ResumenPagoPorPersona rppp;
+        
+        List<Gasto> gastos=GastoDAO.readAll(e.getId());
+        Iterator<Gasto> it= gastos.iterator();
+        while(it.hasNext()){
+            g=it.next();
+            if(p.getId().equals(g.getIdPagador())){
+                haPagado.add(g.getPrecio()+" EUR - "+g.getNombre());
+            }else if(esDeudor(p.getNombre(), g.getDeudores())){
+                haGastado.add(Math.floor(g.getPrecio()/g.getDeudores().size()*100)/100+" EUR - "+g.getNombre());
+            }
+        }
+        
+        Iterator <String> it2=haPagado.iterator();
+        Iterator <String> it3=haGastado.iterator();
+        
+        while(it2.hasNext() || it3.hasNext()){
+            if(it2.hasNext() && it3.hasNext()){
+                rppp=new ResumenPagoPorPersona(it2.next(), it3.next());
+                resumen.add(rppp);
+            }else if(it2.hasNext()){
+                rppp=new ResumenPagoPorPersona(it2.next(), "");
+                resumen.add(rppp);
+            }else{
+                rppp=new ResumenPagoPorPersona("", it3.next());
+                resumen.add(rppp);
+            }
+            
+        }
         return resumen;
     }
 }
