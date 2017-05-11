@@ -76,11 +76,18 @@ public class ParticipanteDAO {
      * @param nombre String nombre del participante.
      * @return Participante.
      */
-    public static Participante read(String nombre){
-        BasicDBObject whereQuery = new BasicDBObject();
-        whereQuery.put("nombre", nombre);
-        BasicDBObject document = (BasicDBObject) participantes.findOne(whereQuery);
-        return new Participante(document.getObjectId("_id"), nombre, document.getObjectId("idAmigoDe"));
+    public static Participante read(String nombre, ObjectId idAmigoDe){
+        BasicDBObject andQuery = new BasicDBObject();
+        List<BasicDBObject> obj = new ArrayList<>();
+        obj.add(new BasicDBObject("nombre", nombre));
+        obj.add(new BasicDBObject("idAmigoDe", idAmigoDe));
+        andQuery.put("$and", obj);
+        BasicDBObject document = (BasicDBObject) participantes.findOne(andQuery);
+        Participante p = null;
+        if(document!=null){
+            p = new Participante(document.getObjectId("_id"), nombre, idAmigoDe);
+        }
+        return p;
     }
 
     /**
