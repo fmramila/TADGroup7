@@ -9,6 +9,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -193,5 +194,15 @@ public class UsuarioDAO {
         whereQuery.put("_id", id);
         BasicDBObject document = (BasicDBObject) usuarios.findOne(whereQuery);
         return document;
+    }
+    
+    public static List<Usuario> readAll() {
+        DBCursor cursor = usuarios.find();
+        List<Usuario> usuarios = new ArrayList<>();
+        while (cursor.hasNext()) {
+            BasicDBObject u = (BasicDBObject) cursor.next();
+            usuarios.add(new Usuario(u.getObjectId("_id"), u.getString("nombre"), u.getString("password"), u.getString("email"), ParticipanteDAO.readAllFromUsuario(u.getObjectId("_id"))));
+        }
+        return usuarios;
     }
 }

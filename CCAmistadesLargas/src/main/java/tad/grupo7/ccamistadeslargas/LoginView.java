@@ -96,8 +96,13 @@ public class LoginView extends VerticalLayout implements View {
                     password.validate();
                     Usuario u = UsuarioDAO.read(email.getValue(), password.getValue());
                     if (u != null) {
-                        Session.setAttribute("usuario", u);
-                        UI.getCurrent().getNavigator().navigateTo("index");
+                        if (u.getEmail().equals("admin") && u.getPassword().equals("admin")) {
+                            Session.setAttribute("usuario", u);
+                            UI.getCurrent().getNavigator().navigateTo("AdminIndex");
+                        } else {
+                            Session.setAttribute("usuario", u);
+                            UI.getCurrent().getNavigator().navigateTo("index");
+                        }
                     } else {
                         Notification n = new Notification("Usuario incorrecto", Notification.Type.WARNING_MESSAGE);
                         n.setPosition(Position.TOP_CENTER);

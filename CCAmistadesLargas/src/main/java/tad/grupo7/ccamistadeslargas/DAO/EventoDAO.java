@@ -332,5 +332,15 @@ public class EventoDAO {
         }
         return false;
     }
+    
+    public static List<Evento> readAll() {
+        DBCursor cursor = eventos.find();
+        List<Evento> eventos = new ArrayList<>();
+        while (cursor.hasNext()) {
+            BasicDBObject e = (BasicDBObject) cursor.next();
+            eventos.add(new Evento(e.getObjectId("_id"), e.getString("nombre"), e.getString("divisa"), e.getObjectId("idCreador"), ParticipanteDAO.readAllFromEvento(e.getObjectId("_id"))));
+        }
+        return eventos;
+    }
 
 }

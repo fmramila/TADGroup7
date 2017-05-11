@@ -74,7 +74,9 @@ public class Usuario {
         this.amigos = amigos;
     }
 
-    
+     public String[] getArray() {
+        return new String[]{getNombre(),getPassword(),getEmail()};
+    }
 
     
 }
