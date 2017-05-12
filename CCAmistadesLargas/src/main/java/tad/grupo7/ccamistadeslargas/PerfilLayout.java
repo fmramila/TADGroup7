@@ -47,7 +47,7 @@ public class PerfilLayout extends VerticalLayout {
         password.setValue(usuario.getPassword());
         password.setRequired(true);
         TextField email = new TextField("Email");
-        email.setValue(usuario.getPassword());
+        email.setValue(usuario.getEmail());
         email.setEnabled(false);
         Button actualizar = new Button("Actualizar");
         //BOTÓN ACTUALIZAR

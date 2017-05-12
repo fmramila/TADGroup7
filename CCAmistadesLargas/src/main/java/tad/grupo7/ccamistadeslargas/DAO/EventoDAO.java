@@ -107,7 +107,7 @@ public class EventoDAO {
      * Devuelve un listado con todos los eventos del usuario.
      *
      * @param idUsuario ObjectId del usuario.
-     * @return List<Evento>
+     * @return List
      */
     public static List<Evento> readAll(ObjectId idUsuario) {
         BasicDBObject whereQuery = new BasicDBObject();
@@ -162,7 +162,7 @@ public class EventoDAO {
      * Indica si el participante es deudor del pago
      * 
      * @param nombre String nombre del participante
-     * @param deudores List<Participante> lista de deudores de un pago
+     * @param deudores List lista de deudores de un pago
      * @return Boolean
      */
     private static Boolean esDeudor(String nombre, List<Participante> deudores) {
@@ -178,7 +178,7 @@ public class EventoDAO {
      * Obtiene un listado que se mostrará en forma de tabla acerca de las deudas de los participantes.
      * 
      * @param e Evento
-     * @return List<ResumenPlusvalia>
+     * @return List
      */
     public static List<ResumenPlusvalia> getResumenPlusvalia(Evento e) {
         Double plusvalia = 0.0;
@@ -291,7 +291,7 @@ public class EventoDAO {
      * Si no se encuentra, devuelve -1.
      * 
      * @param nombre String nombre de la persona
-     * @param resumen List<ResumenPlusvalia>
+     * @param resumen List
      * @return Int
      */
     private static int estaIncluida(String nombre, List<ResumenPlusvalia> resumen) {
@@ -312,7 +312,7 @@ public class EventoDAO {
      * Método que devuelve un listado que se presentará en forma de tabla del resumen gasto a gasto por persona.
      * @param e Evento
      * @param p Participante
-     * @return List<ResumenPagoPorPersona>
+     * @return List
      */
     public static List<ResumenPagoPorPersona> getResumenGastosPorPersona(Evento e, Participante p) {
         List<ResumenPagoPorPersona> resumen = new ArrayList<>();
@@ -369,7 +369,7 @@ public class EventoDAO {
     
     /**
      * Lee todos los eventos de la BD
-     * @return List<Evento>
+     * @return List
      */
     public static List<Evento> readAll() {
         DBCursor cursor = eventos.find();
