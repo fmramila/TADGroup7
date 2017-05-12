@@ -86,16 +86,6 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.4.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>dragdroplayouts</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin.tapio</groupId>
-            <artifactId>googlemaps</artifactId>
-            <version>1.3.4</version>
-        </dependency>
     </dependencies>
     
     <reporting>
