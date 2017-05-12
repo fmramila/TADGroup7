@@ -196,6 +196,10 @@ public class UsuarioDAO {
         return document;
     }
     
+    /**
+     * Devuelve todos los usuarios de la BD.
+     * @return List
+     */
     public static List<Usuario> readAll() {
         DBCursor cursor = usuarios.find();
         List<Usuario> usuarios = new ArrayList<>();

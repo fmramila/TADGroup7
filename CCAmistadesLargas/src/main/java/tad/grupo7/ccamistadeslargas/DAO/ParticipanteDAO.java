@@ -93,7 +93,7 @@ public class ParticipanteDAO {
     /**
      * Obtiene una lista de todos los participantes de un evento.
      * @param idEvento ObjectId del evento.
-     * @return List<Participante>
+     * @return List
      */
     public static List<Participante> readAllFromEvento(ObjectId idEvento) {
         List<Participante> participantes = new ArrayList<>();
@@ -116,7 +116,7 @@ public class ParticipanteDAO {
     /**
      * Obtiene todos los participantes(amigos) de un Usuario.
      * @param idUsuario ObjectId del usuario.
-     * @return 
+     * @return List
      */
     public static List<Participante> readAllFromUsuario(ObjectId idUsuario) {
         BasicDBObject whereQuery = new BasicDBObject();
@@ -140,7 +140,7 @@ public class ParticipanteDAO {
     /**
      * Obtiene un listado de todos los deudores de un pago de un evento.
      * @param idGasto ObjectId del gasto.
-     * @return List<Participante>
+     * @return List
      */
     public static List<Participante> readAllDeudoresFromPago(ObjectId idGasto) {
         BasicDBObject whereQuery = new BasicDBObject();

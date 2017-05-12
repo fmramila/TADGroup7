@@ -33,7 +33,7 @@ public class GastoDAO {
      * @param precio Double precio del gasto.
      * @param idEvento ObjectId del evento al que pertenece el gasto.
      * @param idPagador ObjectId del encargado de pagar el gasto.
-     * @param deudores  List<Participante> participantes del evento que se han beneficiado del pagador.
+     * @param deudores  List participantes del evento que se han beneficiado del pagador.
      */
     public static void create(String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
         BasicDBObject document = new BasicDBObject();
@@ -56,7 +56,7 @@ public class GastoDAO {
      * @param precio Double precio del gasto.
      * @param idEvento ObjectId del evento.
      * @param idPagador ObjectId del pagador.
-     * @param deudores List<Participante> deudores del gasto.
+     * @param deudores List deudores del gasto.
      */
     public static void update(ObjectId id, String nombre, Double precio, ObjectId idEvento, ObjectId idPagador, List<Participante> deudores) {
         delete(id);
@@ -90,7 +90,7 @@ public class GastoDAO {
     /**
      * Obtiene todos los gastos pertenecientes a un evento.
      * @param idEvento ObjectId del evento.
-     * @return List<Gasto>
+     * @return List
      */
     public static List<Gasto> readAll(ObjectId idEvento){
         BasicDBObject whereQuery = new BasicDBObject();
