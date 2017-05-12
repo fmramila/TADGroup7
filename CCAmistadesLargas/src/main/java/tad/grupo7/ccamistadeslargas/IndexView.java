@@ -16,7 +16,8 @@ import java.io.File;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
- *
+ * Clase SideMenu que engloba todos los apartados en forma de layout.
+ * 
  * @author cayetano
  */
 @Theme("mytheme")

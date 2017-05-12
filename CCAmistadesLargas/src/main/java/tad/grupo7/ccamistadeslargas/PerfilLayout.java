@@ -15,12 +15,11 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import tad.grupo7.ccamistadeslargas.DAO.GastoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 
 /**
- *
+ * 
  * @author cayetano
  */
 public class PerfilLayout extends VerticalLayout {
@@ -33,12 +32,14 @@ public class PerfilLayout extends VerticalLayout {
     }
 
     private void mostrarPerfil() {
+        //TÍTULO
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
         Label l = new Label("Perfil");
         l.setSizeUndefined();
         l.addStyleName(ValoTheme.LABEL_H2);
         l.addStyleName(ValoTheme.LABEL_COLORED);
+        //FORMULARIO
         TextField nombre = new TextField("Nombre");
         nombre.setValue(usuario.getNombre());
         nombre.setRequired(true);
@@ -49,7 +50,7 @@ public class PerfilLayout extends VerticalLayout {
         email.setValue(usuario.getPassword());
         email.setEnabled(false);
         Button actualizar = new Button("Actualizar");
-
+        //BOTÓN ACTUALIZAR
         actualizar.addClickListener(clickEvent -> {
             UsuarioDAO.update(usuario.getId(), nombre.getValue(), password.getValue(), usuario.getEmail());
             Notification n = new Notification("Usuario actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
@@ -58,7 +59,7 @@ public class PerfilLayout extends VerticalLayout {
             usuario.setNombre(nombre.getValue());
             usuario.setPassword(password.getValue());
         });
-
+        //AÑADIR COMPONENTES
         FormLayout form = new FormLayout(l, nombre, password, email, actualizar);
         form.setMargin(true);
         addComponents(form);

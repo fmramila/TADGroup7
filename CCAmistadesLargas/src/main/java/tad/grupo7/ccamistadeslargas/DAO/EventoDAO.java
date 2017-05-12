@@ -158,6 +158,13 @@ public class EventoDAO {
         return (BasicDBObject) eventos.findOne(andQuery);
     }
 
+    /**
+     * Indica si el participante es deudor del pago
+     * 
+     * @param nombre String nombre del participante
+     * @param deudores List<Participante> lista de deudores de un pago
+     * @return Boolean
+     */
     private static Boolean esDeudor(String nombre, List<Participante> deudores) {
         for (Participante d : deudores) {
             if (nombre.equals(d.getNombre())) {
@@ -167,6 +174,12 @@ public class EventoDAO {
         return false;
     }
 
+    /**
+     * Obtiene un listado que se mostrará en forma de tabla acerca de las deudas de los participantes.
+     * 
+     * @param e Evento
+     * @return List<ResumenPlusvalia>
+     */
     public static List<ResumenPlusvalia> getResumenPlusvalia(Evento e) {
         Double plusvalia = 0.0;
         int hePagado = 0, heParticipado = 0;
@@ -273,6 +286,14 @@ public class EventoDAO {
         return resumen;
     }
 
+    /**
+     * Indica en qué posición está el participante en la lista resumen.
+     * Si no se encuentra, devuelve -1.
+     * 
+     * @param nombre String nombre de la persona
+     * @param resumen List<ResumenPlusvalia>
+     * @return Int
+     */
     private static int estaIncluida(String nombre, List<ResumenPlusvalia> resumen) {
         Iterator<ResumenPlusvalia> it = resumen.iterator();
         ResumenPlusvalia resu;
@@ -287,6 +308,12 @@ public class EventoDAO {
         return -1;
     }
 
+    /**
+     * Método que devuelve un listado que se presentará en forma de tabla del resumen gasto a gasto por persona.
+     * @param e Evento
+     * @param p Participante
+     * @return List<ResumenPagoPorPersona>
+     */
     public static List<ResumenPagoPorPersona> getResumenGastosPorPersona(Evento e, Participante p) {
         List<ResumenPagoPorPersona> resumen = new ArrayList<>();
         List<String> haPagado=new ArrayList<>();
@@ -324,6 +351,13 @@ public class EventoDAO {
         return resumen;
     }
 
+    /**
+     * Indica si el amigo es participante de un evento.
+     * 
+     * @param evento Evento
+     * @param participante Participante
+     * @return Boolean
+     */
     public static boolean esParticipante(Evento evento, Participante participante) {
         for(Participante p : evento.getParticipantes()){
             if(p.getNombre().equals(participante.getNombre())){
@@ -333,6 +367,10 @@ public class EventoDAO {
         return false;
     }
     
+    /**
+     * Lee todos los eventos de la BD
+     * @return List<Evento>
+     */
     public static List<Evento> readAll() {
         DBCursor cursor = eventos.find();
         List<Evento> eventos = new ArrayList<>();

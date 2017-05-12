@@ -38,6 +38,9 @@ class AmigosLayout extends HorizontalSplitPanel {
         mostrarAmistades();
     }
 
+    /**
+     * Muestra el listado de amistades del usuario creadas por él.
+     */
     private void mostrarAmistades() {
         removeAllComponents();
         //BOTÓN PARA AÑADIR OTRO PARTICIPANTE
@@ -53,6 +56,10 @@ class AmigosLayout extends HorizontalSplitPanel {
         setFirstComponent(col1);
     }
 
+    /**
+     * Muestra una amistad en concreto.
+     * @param p Participante
+     */
     private void mostrarParticipante(Participante p) {
         //FORMULARIO POR SI SE QUIERE EDITAR EL PARTICIPANTE
         TextField nombre = new TextField("Nombre");
@@ -92,6 +99,10 @@ class AmigosLayout extends HorizontalSplitPanel {
         setSecondComponent(l);
     }
 
+    /**
+     * Obtiene la tabla de amistades de la BD.
+     * @return Table
+     */
     private Table getTablaAmistades() {
         List<Participante> participantes = ParticipanteDAO.readAllFromUsuario(usuario.getId());
         Table table = new Table("");
@@ -121,6 +132,9 @@ class AmigosLayout extends HorizontalSplitPanel {
         return table;
     }
 
+    /**
+     * Muestra el formulario para añadir una nueva amistad.
+     */
     private void mostrarFormularioAddAmistad() {
         TextField nombre = new TextField("Nombre");
         nombre.setRequired(true);

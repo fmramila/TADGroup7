@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Clase que actua como sesión.
+ * 
  * @author cayetano
  */
 public class Session {
