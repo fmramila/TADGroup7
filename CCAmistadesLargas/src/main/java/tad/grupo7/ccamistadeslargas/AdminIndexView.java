@@ -7,8 +7,12 @@ package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.VaadinService;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.UI;
+import java.io.File;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
@@ -18,7 +22,13 @@ import org.vaadin.teemusa.sidemenu.SideMenu;
 class AdminIndexView extends SideMenu implements View {
 
     public AdminIndexView() {
-        setMenuCaption("CCAmistadesLargas");
+        setMenuCaption("CCAmistadesLargas - ADMIN");
+        String basepath = VaadinService.getCurrent()
+                .getBaseDirectory().getAbsolutePath() + "/WEB-INF/wallpaper2.jpg";
+        FileResource resource = new FileResource(new File(basepath));
+        Image image = new Image(null, resource);
+        image.setSizeFull();
+        addComponent(image);
         addMenuItem("Listado",FontAwesome.LIST, () -> {
             removeAllComponents();
             addComponent(new ListadoLayout());

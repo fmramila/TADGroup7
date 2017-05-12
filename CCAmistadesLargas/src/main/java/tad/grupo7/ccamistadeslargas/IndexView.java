@@ -31,7 +31,6 @@ public class IndexView extends SideMenu implements View {
         FileResource resource = new FileResource(new File(basepath));
         Image image = new Image(null, resource);
         image.setSizeFull();
-        image.setHeight("100%");
         addComponent(image);
         addMenuItem("Perfil",FontAwesome.USER, () -> {
             removeAllComponents();
