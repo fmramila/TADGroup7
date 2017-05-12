@@ -8,6 +8,7 @@ package tad.grupo7.ccamistadeslargas;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.UI;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
@@ -25,6 +26,10 @@ class AdminIndexView extends SideMenu implements View {
         addMenuItem("Grafica",FontAwesome.PIE_CHART, () -> {
             removeAllComponents();
             addComponent(new GraficaLayout());
+        });
+        addMenuItem("Cerrar sesión",FontAwesome.POWER_OFF, () -> {
+            Session.destroy();
+            UI.getCurrent().getNavigator().navigateTo("");
         });
     }
 
