@@ -6,7 +6,8 @@
 package tad.grupo7.ccamistadeslargas.modelo;
 
 /**
- *
+ * Clase para representar las tablas resúmenes de las cuentas finales de un evento.
+ * 
  * @author cayetano
  */
 public class ResumenPlusvalia {
