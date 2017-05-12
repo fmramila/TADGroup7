@@ -6,6 +6,7 @@
 package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.data.Validator;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Alignment;
@@ -46,6 +47,7 @@ public class RegistrarView extends VerticalLayout implements View {
         TextField email = new TextField("Email");
         email.setRequired(true);
         final Button registrar = new Button("Sign Up");
+        registrar.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         registrar.addStyleName(ValoTheme.BUTTON_PRIMARY);
         FormLayout form = new FormLayout(nombre, password, email, registrar);
         //BOTÓN PARA REGISTRARSE
@@ -57,7 +59,7 @@ public class RegistrarView extends VerticalLayout implements View {
                     password.validate();
                     email.validate();
                     UsuarioDAO.create(nombre.getValue(),password.getValue(),email.getValue());
-                    Usuario u = UsuarioDAO.read(nombre.getValue(), password.getValue());
+                    Usuario u = UsuarioDAO.read(email.getValue(), password.getValue());
                     Session.setAttribute("usuario", u);
                     UI.getCurrent().getNavigator().navigateTo("index");
                 } catch (Validator.InvalidValueException ex) {

@@ -78,18 +78,20 @@ class EventosLayout extends HorizontalSplitPanel {
         //TÍTULO
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
-        Label l = new Label("Evento "+e.getNombre());
+        Label l = new Label("Evento " + e.getNombre());
         l.setSizeUndefined();
         l.addStyleName(ValoTheme.LABEL_H2);
         l.addStyleName(ValoTheme.LABEL_COLORED);
         //FORMULARIO POR SI SE QUIERE EDITAR EL EVENTO
         TextField nombre = new TextField("Nombre");
         nombre.setValue(e.getNombre());
+        nombre.setRequired(true);
         ComboBox divisa = new ComboBox("Divisa");
-        divisa.setValue(e.getDivisa());
+        divisa.setNullSelectionAllowed(false);
         divisa.setRequired(true);
         divisa.addItem("€");
         divisa.addItem("$");
+
         HorizontalLayout layouth = new HorizontalLayout();
         HorizontalLayout layouth2 = new HorizontalLayout();
         layouth.setSpacing(true);
@@ -104,14 +106,22 @@ class EventosLayout extends HorizontalSplitPanel {
         final Button hacerCuentas = new Button("Hacer las cuentas");
         //BOTÓN PARA ACTUALIZAR EL EVENTO
         actualizar.addClickListener(clickEvent -> {
-            if (EventoDAO.readDBObject(nombre.getValue(), usuario.getId()) == null) {
-                EventoDAO.update(e.getId(), nombre.getValue(), divisa.getValue().toString());
-                Notification n = new Notification("Evento actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
-                n.setPosition(Position.TOP_CENTER);
-                n.show(Page.getCurrent());
-                mostrarEventos();
-            } else {
-                Notification n = new Notification("Ya existe un evento con ese nombre", Notification.Type.WARNING_MESSAGE);
+            try {
+                nombre.validate();
+                divisa.validate();
+                if (EventoDAO.readDBObject(nombre.getValue(), usuario.getId()) == null) {
+                    EventoDAO.update(e.getId(), nombre.getValue(), divisa.getValue().toString());
+                    Notification n = new Notification("Evento actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                    mostrarEventos();
+                } else {
+                    Notification n = new Notification("Ya existe un evento con ese nombre", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
+                }
+            } catch (Validator.InvalidValueException ex) {
+                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
                 n.setPosition(Position.TOP_CENTER);
                 n.show(Page.getCurrent());
             }
@@ -136,12 +146,12 @@ class EventosLayout extends HorizontalSplitPanel {
             removeAllComponents();
             VerticalLayout vl = new VerticalLayout();
             Table tablaResumenPlusvalia = getTablaResumenPlusvalia(e);
-            HorizontalLayout hl1= new HorizontalLayout(tablaResumenPlusvalia);
+            HorizontalLayout hl1 = new HorizontalLayout(tablaResumenPlusvalia);
             hl1.setMargin(true);
             hl1.setSpacing(true);
             vl.addComponent(hl1);
-            for(Participante p : ParticipanteDAO.readAllFromEvento(e.getId())){
-                HorizontalLayout hl= new HorizontalLayout(getTablaResumenGastosPorPersona(e,p));
+            for (Participante p : ParticipanteDAO.readAllFromEvento(e.getId())) {
+                HorizontalLayout hl = new HorizontalLayout(getTablaResumenGastosPorPersona(e, p));
                 hl.setMargin(true);
                 hl.setSpacing(true);
                 vl.addComponent(hl);
@@ -155,7 +165,7 @@ class EventosLayout extends HorizontalSplitPanel {
         Table tablaParticipantes = getTablaParticipantes(e);
         //AÑADIMOS LOS COMPONENTES
         FormLayout form = new FormLayout(nombre, divisa, layouth, layouth2, hacerCuentas);
-        VerticalLayout vl = new VerticalLayout(l,form, tablaGastos, tablaParticipantes);
+        VerticalLayout vl = new VerticalLayout(l, form, tablaGastos, tablaParticipantes);
         vl.setMargin(true);
         setFirstComponent(vl);
     }
@@ -169,25 +179,35 @@ class EventosLayout extends HorizontalSplitPanel {
         //TÍTULO
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
-        Label l = new Label("Gasto "+g.getNombre());
+        Label l = new Label("Gasto " + g.getNombre());
         l.setSizeUndefined();
         l.addStyleName(ValoTheme.LABEL_H2);
         l.addStyleName(ValoTheme.LABEL_COLORED);
         //FORMULARIO POR SI SE QUIERE EDITAR EL GASTO
         TextField nombre = new TextField("Titulo");
         nombre.setValue(g.getNombre());
+        nombre.setRequired(true);
         TextField precio = new TextField("Precio");
         precio.setValue(g.getPrecio().toString());
+        precio.setRequired(true);
         final Button actualizar = new Button("Actualizar Gasto");
         final Button eliminar = new Button("Eliminar Gasto");
         //BOTÓN PARA ACTUALIZAR EL GASTO
         actualizar.addClickListener(clickEvent -> {
-            GastoDAO.update(g.getId(), nombre.getValue(), Double.valueOf(precio.getValue()), g.getIdEvento(), g.getIdPagador(), g.getDeudores());
-            Notification n = new Notification("Gasto actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
-            n.setPosition(Position.TOP_CENTER);
-            n.show(Page.getCurrent());
-            setSecondComponent(null);
-            mostrarEvento(e);
+            try {
+                nombre.validate();
+                precio.validate();
+                GastoDAO.update(g.getId(), nombre.getValue(), Double.valueOf(precio.getValue()), g.getIdEvento(), g.getIdPagador(), g.getDeudores());
+                Notification n = new Notification("Gasto actualizado", Notification.Type.ASSISTIVE_NOTIFICATION);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+                setSecondComponent(null);
+                mostrarEvento(e);
+            } catch (Validator.InvalidValueException ex) {
+                Notification n = new Notification("Error con los campos", Notification.Type.WARNING_MESSAGE);
+                n.setPosition(Position.TOP_CENTER);
+                n.show(Page.getCurrent());
+            }
         });
         //BOTÓN PARA ELIMINAR EL GASTO
         eliminar.addClickListener(clickEvent -> {
@@ -197,7 +217,7 @@ class EventosLayout extends HorizontalSplitPanel {
         });
         //AÑADIMOS LOS COMPONENTES
         FormLayout form = new FormLayout(nombre, precio, actualizar, eliminar);
-        VerticalLayout vl = new VerticalLayout(l,form);
+        VerticalLayout vl = new VerticalLayout(l, form);
         vl.setMargin(true);
         setSecondComponent(vl);
     }
@@ -295,7 +315,7 @@ class EventosLayout extends HorizontalSplitPanel {
                 n.show(Page.getCurrent());
             }
         });
-        FormLayout form = new FormLayout(l,nuevoParticipante, add);
+        FormLayout form = new FormLayout(l, nuevoParticipante, add);
         form.setMargin(true);
         setSecondComponent(form);
     }
@@ -322,7 +342,7 @@ class EventosLayout extends HorizontalSplitPanel {
         ComboBox pagador = new ComboBox("Pagador");
         List<Participante> deudores = new ArrayList<>();
         Label d = new Label("Deudores");
-        FormLayout form = new FormLayout(l,titulo, precio, pagador,d);
+        FormLayout form = new FormLayout(l, titulo, precio, pagador, d);
         for (Participante p : participantes) {
             pagador.addItem(p.getNombre());
             CheckBox c = new CheckBox(p.getNombre());
@@ -463,14 +483,14 @@ class EventosLayout extends HorizontalSplitPanel {
 
     /**
      * Obtiene la tabla resumen de los pagos de cada persona.
-     * 
+     *
      * @param e Evento
      * @param p Participante
      * @return Table
      */
     private Table getTablaResumenGastosPorPersona(Evento e, Participante p) {
-        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e,p);
-        Table table = new Table("Resumen Gastos: "+p.getNombre());
+        List<ResumenPagoPorPersona> resumenGastosPorPersona = EventoDAO.getResumenGastosPorPersona(e, p);
+        Table table = new Table("Resumen Gastos: " + p.getNombre());
         table.addContainerProperty("Ha pagado", String.class, null);
         table.addContainerProperty("Ha gastado", String.class, null);
         for (ResumenPagoPorPersona rppp : resumenGastosPorPersona) {

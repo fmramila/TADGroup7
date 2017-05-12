@@ -74,6 +74,7 @@ public class ParticipanteDAO {
     /**
      * Devuelve un participante de la BD.
      * @param nombre String nombre del participante.
+     * @param idAmigoDe ObhectId del usuario creador.
      * @return Participante.
      */
     public static Participante read(String nombre, ObjectId idAmigoDe){

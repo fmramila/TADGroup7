@@ -7,12 +7,16 @@ package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.server.Page;
 import static com.vaadin.server.Sizeable.UNITS_PERCENTAGE;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.shared.Position;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
+import java.util.Iterator;
 import java.util.List;
 import tad.grupo7.ccamistadeslargas.DAO.UsuarioDAO;
 import tad.grupo7.ccamistadeslargas.modelo.Usuario;
@@ -21,11 +25,7 @@ import tad.grupo7.ccamistadeslargas.modelo.Usuario;
  *
  * @author Naiara
  */
-public class ListadoLayout extends HorizontalSplitPanel {
-
-    final VerticalLayout col1 = new VerticalLayout();
-    final VerticalLayout col2 = new VerticalLayout();
-    final Button eliminar = new Button("Eliminar Usuario");
+public class ListadoLayout extends VerticalLayout {
 
     public ListadoLayout() {
         mostrarListado();
@@ -35,12 +35,19 @@ public class ListadoLayout extends HorizontalSplitPanel {
      * Muestra una tabla con todos los usuarios.
      */
     private void mostrarListado() {
-        col1.removeAllComponents();
+        removeAllComponents();
+        //TÍTULO
+        CssLayout labels = new CssLayout();
+        labels.addStyleName("labels");
+        Label l = new Label("Selecciona un usuario para eliminarlo");
+        l.setSizeUndefined();
+        l.addStyleName(ValoTheme.LABEL_H2);
+        l.addStyleName(ValoTheme.LABEL_COLORED);
+        //TABLA DE USUARIOS
         Table table = getTablaListado();
-        col1.addComponent(table);
-        col1.setMargin(true);
-        setFirstComponent(col1);
-        setSecondComponent(col2);
+        //AÑADIMOS COMPONENTES
+        addComponents(l,table);
+        setMargin(true);
 
     }
 
@@ -55,37 +62,30 @@ public class ListadoLayout extends HorizontalSplitPanel {
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Password", String.class, null);
         table.addContainerProperty("Email", String.class, null);
-
-        for (Usuario u : usuarios) {
-            table.addItem(u.getArray(), null);
+        Iterator<Usuario> it = usuarios.iterator();
+        it.next();
+        while(it.hasNext()){
+            table.addItem(it.next().getArray(), null);
         }
 
         table.setPageLength(table.size());
         table.setWidth(100, UNITS_PERCENTAGE);
+        table.setSelectable(true);
         table.setImmediate(true);
 
         table.addValueChangeListener(new ValueChangeListener() {
 
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                col2.removeAllComponents();
-                Label l = new Label();
                 try {
-                    Usuario u = usuarios.get((int) table.getValue() - 1);
-                    l.setValue(u.getNombre());
-                    eliminar.addClickListener(clickEvent -> {
-                        UsuarioDAO.delete(u.getId());
-                        col2.removeAllComponents();
-                        mostrarListado();
-                    });
-
+                    Usuario u = usuarios.get((int) table.getValue());
+                    UsuarioDAO.delete(u.getId());
+                    mostrarListado();
+                    Notification n = new Notification("Usuario eliminado", Notification.Type.WARNING_MESSAGE);
+                    n.setPosition(Position.TOP_CENTER);
+                    n.show(Page.getCurrent());
                 } catch (Exception e) {
                 }
-                col2.addComponents(l, eliminar);
-                if (l.getValue() == null || l.getValue().equals("")) {
-                    col2.removeAllComponents();
-                }
-                col2.setMargin(true);
             }
         });
 

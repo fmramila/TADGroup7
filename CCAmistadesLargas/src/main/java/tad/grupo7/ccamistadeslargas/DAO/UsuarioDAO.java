@@ -38,7 +38,7 @@ public class UsuarioDAO {
         document.append("password", password);
         document.append("email", email);
         usuarios.insert(document);
-        Usuario u = read(nombre, password);
+        Usuario u = read(email, password);
         addAmigo(nombre, u.getId()); //se añade a él mismo como amigo
     }
 
