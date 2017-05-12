@@ -7,6 +7,7 @@ package tad.grupo7.ccamistadeslargas;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FontAwesome;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
 /**
@@ -17,11 +18,11 @@ class AdminIndexView extends SideMenu implements View {
 
     public AdminIndexView() {
         setMenuCaption("CCAmistadesLargas");
-        addMenuItem("Listado", () -> {
+        addMenuItem("Listado",FontAwesome.LIST, () -> {
             removeAllComponents();
             addComponent(new ListadoLayout());
         });
-        addMenuItem("Grafica", () -> {
+        addMenuItem("Grafica",FontAwesome.PIE_CHART, () -> {
             removeAllComponents();
             addComponent(new GraficaLayout());
         });

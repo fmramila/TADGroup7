@@ -9,6 +9,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileResource;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.UI;
@@ -32,19 +33,19 @@ public class IndexView extends SideMenu implements View {
         image.setSizeFull();
         image.setHeight("100%");
         addComponent(image);
-        addMenuItem("Perfil", () -> {
+        addMenuItem("Perfil",FontAwesome.USER, () -> {
             removeAllComponents();
             addComponent(new PerfilLayout());
         });
-        addMenuItem("Eventos", () -> {
+        addMenuItem("Eventos",FontAwesome.COMPASS, () -> {
             removeAllComponents();
             addComponent(new EventosLayout());
         });
-        addMenuItem("Amigos", () -> {
+        addMenuItem("Amigos",FontAwesome.USERS, () -> {
             removeAllComponents();
             addComponent(new AmigosLayout());
         });
-        addMenuItem("Cerrar sesión", () -> {
+        addMenuItem("Cerrar sesión",FontAwesome.POWER_OFF, () -> {
             Session.destroy();
             UI.getCurrent().getNavigator().navigateTo("");
         });
