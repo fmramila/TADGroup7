@@ -26,12 +26,6 @@ public class IndexView extends SideMenu implements View {
 
     public IndexView() {
         setMenuCaption("CCAmistadesLargas");
-        String basepath = VaadinService.getCurrent()
-                .getBaseDirectory().getAbsolutePath() + "/WEB-INF/wallpaper2.jpg";
-        FileResource resource = new FileResource(new File(basepath));
-        Image image = new Image(null, resource);
-        image.setSizeFull();
-        addComponent(image);
         addMenuItem("Perfil",FontAwesome.USER, () -> {
             removeAllComponents();
             addComponent(new PerfilLayout());
@@ -46,12 +40,19 @@ public class IndexView extends SideMenu implements View {
         });
         addMenuItem("Cerrar sesión",FontAwesome.POWER_OFF, () -> {
             Session.destroy();
+            removeAllComponents();
             UI.getCurrent().getNavigator().navigateTo("");
         });
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
+        String basepath = VaadinService.getCurrent()
+                .getBaseDirectory().getAbsolutePath() + "/WEB-INF/wallpaper2.jpg";
+        FileResource resource = new FileResource(new File(basepath));
+        Image image = new Image(null, resource);
+        image.setSizeFull();
+        addComponent(image);
     }
 
 }
