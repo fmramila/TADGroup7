@@ -11,15 +11,11 @@ import com.vaadin.addon.charts.model.Configuration;
 import com.vaadin.addon.charts.model.DataSeries;
 import com.vaadin.addon.charts.model.DataSeriesItem;
 import com.vaadin.data.Property;
-import com.vaadin.server.GAEVaadinServlet;
 import static com.vaadin.server.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
-import java.util.ArrayList;
 import java.util.List;
-import org.bson.types.ObjectId;
 import tad.grupo7.ccamistadeslargas.DAO.EventoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.GastoDAO;
 import tad.grupo7.ccamistadeslargas.DAO.ParticipanteDAO;
@@ -40,27 +36,38 @@ public class GraficaLayout extends HorizontalSplitPanel {
         mostrarEventos();
     }
 
+    /**
+     * Muestra una tabla con todos los eventos.
+     */
     private void mostrarEventos() {
         removeAllComponents();
         Table table = getTablaEventos();
 
         col1.addComponents(table);
         col1.setMargin(true);
+        //AÑADIMOS LOS COMPONENTES
         setFirstComponent(col1);
         setSecondComponent(col2);
 
     }
 
+    /**
+     * Obtiene una tabla con todos los eventos.
+     *
+     *
+     * @return Table
+     */
     private Table getTablaEventos() {
         List<Evento> eventos = EventoDAO.readAll();
         List<Gasto> listaGasto;
         Double precio = 0.0;
         Gasto g;
+        //TABLA DE LOS EVENTOS
         Table table = new Table("");
         table.addContainerProperty("Nombre", String.class, null);
         table.addContainerProperty("Gasto", Double.class, null);
         table.addContainerProperty("Divisa", String.class, null);
-
+        //OBTENEMOS LOS GASTOS DE CADA PARTICIPANTE POR EVENTO
         for (Evento e : eventos) {
             listaGasto = GastoDAO.readAll(e.getId());
             for (int i = 0; i < listaGasto.size(); i++) {
@@ -76,10 +83,9 @@ public class GraficaLayout extends HorizontalSplitPanel {
         table.setImmediate(true);
 
         table.addValueChangeListener(new Property.ValueChangeListener() {
-
+            //SI CLICAMOS EN UN EVENTO DE LA TABLA SE MUESTRA
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
-                //***************************
                 col2.removeAllComponents();
                 Chart chart = new Chart(ChartType.PIE);
                 chart.setWidth("400px");
@@ -88,7 +94,7 @@ public class GraficaLayout extends HorizontalSplitPanel {
                 Configuration conf = chart.getConfiguration();
                 conf.setTitle("Gastos por evento");
 
-                //lo que se ha gastado cada participante en ese evento
+                //MOSTRAMOS EN UNA PIE LOS GASTOS POR CADA EVENTO 
                 try {
                     Evento e = eventos.get(((int) table.getValue()) - 1);
                     List<Gasto> gastos = GastoDAO.readAll(e.getId());
@@ -107,7 +113,6 @@ public class GraficaLayout extends HorizontalSplitPanel {
                 Configuration conf1 = chart1.getConfiguration();
                 conf1.setTitle("Gastos por participante");
 
-                //lo que se ha gastado cada participante en ese evento
                 try {
                     Evento e = eventos.get(((int) table.getValue()) - 1);
                     List<Gasto> gastos = GastoDAO.readAll(e.getId());
@@ -117,7 +122,7 @@ public class GraficaLayout extends HorizontalSplitPanel {
                     Double pago = 0.0;
                     String nombre;
                     final DataSeries series = new DataSeries();
-
+                    //MOSTRAMOS EN UNA PIE LOS PARTICIPANTES Y SUS GASTOS
                     for (Participante par : participantes) {
                         nombre = par.getNombre();
                         for (int j = 0; j < gastos.size(); j++) {
@@ -135,11 +140,10 @@ public class GraficaLayout extends HorizontalSplitPanel {
                     conf1.addSeries(series);
                 } catch (Exception e) {
                 }
-
+                //AÑADIMOS LOS COMPONENTES
                 col2.addComponents(chart, chart1);
                 col2.setMargin(true);
 
-                //******************************
             }
         });
         return table;

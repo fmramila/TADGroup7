@@ -32,7 +32,6 @@ import tad.grupo7.ccamistadeslargas.modelo.Usuario;
 @SuppressWarnings("serial")
 @Theme("mytheme")
 public class LoginView extends VerticalLayout implements View {
-
     public LoginView() {
         setSizeFull();
         buildLoginForm();

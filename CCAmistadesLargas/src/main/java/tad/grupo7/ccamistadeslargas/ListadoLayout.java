@@ -31,6 +31,9 @@ public class ListadoLayout extends HorizontalSplitPanel {
         mostrarListado();
     }
 
+    /**
+     * Muestra una tabla con todos los usuarios.
+     */
     private void mostrarListado() {
         col1.removeAllComponents();
         Table table = getTablaListado();
@@ -41,6 +44,11 @@ public class ListadoLayout extends HorizontalSplitPanel {
 
     }
 
+    /**
+     * Obtiene una tabla con todos los usuarios.
+     *
+     * @return Table
+     */
     private Table getTablaListado() {
         List<Usuario> usuarios = UsuarioDAO.readAll();
         Table table = new Table("");
@@ -74,7 +82,7 @@ public class ListadoLayout extends HorizontalSplitPanel {
                 } catch (Exception e) {
                 }
                 col2.addComponents(l, eliminar);
-                if(l.getValue() == null || l.getValue().equals("")){
+                if (l.getValue() == null || l.getValue().equals("")) {
                     col2.removeAllComponents();
                 }
                 col2.setMargin(true);
